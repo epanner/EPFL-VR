@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &75030469 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1670256625, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 183271870}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &183271870
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -174,8 +179,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 268760744}
   m_SourcePrefab: {fileID: 100100000, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+--- !u!1 &268760737 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 183271870}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &268760744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268760737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf8900b553d7c141a2429d124ee1be6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headTransform: {fileID: 832030229}
+  leftHandTransform: {fileID: 1183458059}
+  rightHandTransform: {fileID: 75030469}
+  liftHeight: 1
+  liftDuration: 0.5
+  handDistanceThreshold: 0.4
+  heightTolerance: 0.2
 --- !u!1 &828004167
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,6 +254,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &832030229 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1767192434, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 183271870}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1183458059 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 183271870}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1618625910
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -232,15 +274,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 980555339262795031, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.69
+      value: -0.136
       objectReference: {fileID: 0}
     - target: {fileID: 980555339262795031, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.637
+      value: 0.922
       objectReference: {fileID: 0}
     - target: {fileID: 980555339262795031, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.13
+      value: -1.854
       objectReference: {fileID: 0}
     - target: {fileID: 980555339262795031, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
       propertyPath: m_LocalRotation.w
