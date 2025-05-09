@@ -44,6 +44,22 @@ public class Lanes : MonoBehaviour
             // Move the obstacle in the specified direction
             obstacle.transform.position += direction * Time.deltaTime * speed;
         }
+
+        // Despawn obstacles that are beyond the despawn point
+        List<LaneObject> objectsToRemove = new List<LaneObject>();
+        foreach (LaneObject obstacle in laneObjects)
+        {
+            if (obstacle.transform.position.z > despawnPoint.z)
+            {
+                objectsToRemove.Add(obstacle);
+            }
+        }
+
+        foreach (LaneObject obstacle in objectsToRemove)
+        {
+            laneObjects.Remove(obstacle);
+            Destroy(obstacle.gameObject);
+        }
     }
 
     private void SpawnObjects(int numObjects)
