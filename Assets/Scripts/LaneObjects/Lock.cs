@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class LaneObject : MonoBehaviour
+public class Lock : LaneObject
 {
-    protected bool inLane = true;
+    public Lanes lanesOverride;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,8 +16,13 @@ public class LaneObject : MonoBehaviour
 
     }
 
-    public bool IsInLane()
+    public void Unlocked()
     {
-        return inLane;
+        if (lanes == null)
+        {
+            lanes = lanesOverride;
+        }
+
+        lanes.WallUnlocked();
     }
 }
