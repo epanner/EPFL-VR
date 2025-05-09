@@ -29,7 +29,7 @@ public class ArmHoverController : MonoBehaviour
     }
 
     private void Update()
-    {   
+    {
         if (needsRefill)
         {
             targetYOffset = 0f;
