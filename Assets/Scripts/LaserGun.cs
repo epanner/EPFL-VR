@@ -1,6 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 
 public class LaserGun : MonoBehaviour
@@ -8,7 +11,7 @@ public class LaserGun : MonoBehaviour
     private LineRenderer lineRenderer;
     public InputActionProperty shootAction;
     public GameObject laserOrigin;
-
+    private IXRSelectInteractor currentInteractor = null;
     public float laserLength = 50f;
     public float destructionDelay = 1.0f;
     private GameObject lastHit;
@@ -18,6 +21,14 @@ public class LaserGun : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         shootAction.action.Enable();
+
+        // Register to grab/release events
+        var grabInteractable = GetComponent<XRGrabInteractable>();
+        if (grabInteractable != null)
+        {
+            grabInteractable.selectEntered.AddListener(OnGrab);
+            grabInteractable.selectExited.AddListener(OnRelease);
+        }
     }
 
     private void Update()
@@ -27,7 +38,7 @@ public class LaserGun : MonoBehaviour
         Vector3 dir = laserOrigin.transform.forward;
         Vector3 end = start + dir * laserLength;
 
-        if (isShooting)
+        if (currentInteractor != null && isShooting)
         {
             lineRenderer.SetPosition(0, start);
             lineRenderer.SetPosition(1, end);
@@ -35,16 +46,18 @@ public class LaserGun : MonoBehaviour
 
             if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
             {
-                end = hit.point;
+                lineRenderer.SetPosition(1, hit.point);
 
                 // If it hits something tagged "Obstacle", destroy it
                 if (hit.collider.CompareTag("Obstacle"))
                 {
+                    SendHaptic(0.1f, 0.05f);
                     if (hit.collider.gameObject == lastHit)
                     {
                         hittingTime += Time.deltaTime;
                         if (hittingTime >= destructionDelay)
                         {
+                            SendHaptic(0.5f, 0.2f);
                             Destroy(lastHit);
                             hittingTime = 0.0f;
                         }
@@ -64,6 +77,25 @@ public class LaserGun : MonoBehaviour
         else
         {
             lineRenderer.enabled = false;
+        }
+    }
+
+    private void OnGrab(SelectEnterEventArgs arg0)
+    {
+        currentInteractor = arg0.interactorObject;
+    }
+
+    private void OnRelease(SelectExitEventArgs args)
+    {
+        if (currentInteractor == args.interactorObject)
+            currentInteractor = null;
+    }
+
+    private void SendHaptic(float amplitude, float duration)
+    {
+        if (currentInteractor is XRBaseInputInteractor controllerInteractor)
+        {
+            controllerInteractor.SendHapticImpulse(amplitude, duration);
         }
     }
 }

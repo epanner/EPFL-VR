@@ -63,6 +63,7 @@ public class ArmHoverController : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * liftDuration);
 
         // Update HoverEnergy Bar
+        hoverCharge = Mathf.Clamp01(hoverCharge);
         hoverBarUI.SetHoverBarValue(hoverCharge);
     }
 
