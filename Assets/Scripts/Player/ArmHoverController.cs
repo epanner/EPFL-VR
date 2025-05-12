@@ -7,32 +7,64 @@ public class ArmHoverController : MonoBehaviour
     public Transform rightHandTransform;
 
     public float liftHeight = 1.0f;
-    public float liftDuration = 0.5f;
-    public float handDistanceThreshold = 0.4f; // Horizontal distance needed (meters)
-    public float heightTolerance = 0.2f;      // How strict vertical alignment must be (meters)
+    public float liftDuration = 1.0f;
+    public float handDistanceThreshold = 0.3f; // Horizontal distance needed (meters)
+    public float minHandsHeight = -0.2f;      // How above the head the hands should be (meters) (negative means below)
 
     private Vector3 basePosition;
     private float targetYOffset = 0f;
 
+    // Hover energy bar
+    [SerializeField] private HoverBarUI hoverBarUI;
+
+    public float hoverCharge = 0f; // Beginning hover charge
+    public float drainRate = 0.1f;
+    public float rechargeRate = 0.01f;
+    private bool needsRefill = true;
+
     private void Start()
     {
         basePosition = transform.position;
+        hoverBarUI.SetHoverBarValue(hoverCharge);
     }
 
     private void Update()
     {
-        if (ArmsInTPosition())
+        if (needsRefill)
+        {
+            targetYOffset = 0f;
+            hoverCharge += rechargeRate * Time.deltaTime;
+            if (hoverCharge >= 1.0f)
+            {
+                needsRefill = false;
+            }
+        }
+        else if (ArmsInTPosition())
         {
             targetYOffset = liftHeight;
+            hoverCharge -= drainRate * Time.deltaTime;
+            if (hoverCharge <= 0f)
+            {
+                needsRefill = true;
+            }
         }
         else
         {
+            if (hoverCharge < 0.5f)
+            {
+                needsRefill = true;
+            }
             targetYOffset = 0f;
+            hoverCharge += rechargeRate * Time.deltaTime;
         }
 
         // Smoothly move XR Rig up or down
         Vector3 desiredPosition = basePosition + Vector3.up * targetYOffset;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * liftDuration);
+
+        // Update HoverEnergy Bar
+        hoverCharge = Mathf.Clamp01(hoverCharge);
+        hoverBarUI.SetHoverBarValue(hoverCharge);
     }
 
     private bool ArmsInTPosition()
@@ -42,8 +74,8 @@ public class ArmHoverController : MonoBehaviour
         Vector3 rightPos = rightHandTransform.position;
 
         // Check vertical alignment
-        bool leftHeightOk = Mathf.Abs(leftPos.y - headPos.y) < heightTolerance;
-        bool rightHeightOk = Mathf.Abs(rightPos.y - headPos.y) < heightTolerance;
+        bool leftHeightOk = leftPos.y - headPos.y > minHandsHeight;
+        bool rightHeightOk = rightPos.y - headPos.y > minHandsHeight;
 
         float leftDist = Mathf.Abs(leftPos.x - headPos.x);
         float rightDist = Mathf.Abs(rightPos.x - headPos.x);
@@ -52,10 +84,6 @@ public class ArmHoverController : MonoBehaviour
         bool leftFarEnough = leftDist > handDistanceThreshold;
         bool rightFarEnough = rightDist > handDistanceThreshold;
 
-        // Optional: Make sure hands aren't too far forward/backward
-        bool leftDepthOk = Mathf.Abs(leftPos.z - headPos.z) < handDistanceThreshold;
-        bool rightDepthOk = Mathf.Abs(rightPos.z - headPos.z) < handDistanceThreshold;
-
-        return leftHeightOk && rightHeightOk && leftFarEnough && rightFarEnough && leftDepthOk && rightDepthOk;
+        return leftHeightOk && rightHeightOk && leftFarEnough && rightFarEnough;
     }
 }
