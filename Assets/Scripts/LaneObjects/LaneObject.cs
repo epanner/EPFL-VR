@@ -4,6 +4,7 @@ public class LaneObject : MonoBehaviour
 {
     protected bool inLane = true;
     protected Lanes lanes;
+    protected float health;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

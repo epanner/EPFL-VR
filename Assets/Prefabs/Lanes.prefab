@@ -254,7 +254,8 @@ MonoBehaviour:
   obstacleSpawnPoint: {fileID: 4654659749261499664}
   playerSpawnPoint: {fileID: 2379905820024753232}
   direction: {x: 0, y: 0, z: 1}
-  teleportPads: {fileID: 7767213821035738010}
+  padObject: {fileID: 7767213821035738010}
+  teleportEnabled: 1
   obstacle: {fileID: 1615401992869403919, guid: e4342aa4058feec48909ece25a4aa850, type: 3}
   bomb: {fileID: 1086213859811869279, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
   wall: {fileID: 4268836460064866044, guid: 2dacd9b863888174dbbf8ad5f3bcf9b0, type: 3}

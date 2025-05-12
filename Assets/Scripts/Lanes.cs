@@ -6,10 +6,17 @@ public class Lanes : MonoBehaviour
     // Lane info
     public Transform obstacleSpawnPoint;
     public Transform playerSpawnPoint;
+    private Vector3 despawnPoint;
     public Vector3 direction = Vector3.forward;
 
-    // Teleport pads
-    public GameObject teleportPads;
+    private int lanes = 4;
+    private float laneWidth = 1.2f;
+    private float speed = 5.0f;
+
+    // Teleport function
+    public GameObject padObject;
+    private List<GameObject> teleportPads = new List<GameObject>();
+    public bool teleportEnabled = false;
 
     // Lane objects
     public GameObject obstacle;
@@ -17,10 +24,6 @@ public class Lanes : MonoBehaviour
     public GameObject wall;
     public float bombChance = 0.1f;
     private List<LaneObject> laneObjects = new List<LaneObject>();
-    private int lanes = 4;
-
-    private float laneWidth = 1.2f;
-    private float speed = 5.0f;
 
     private float spawnInterval = 1.2f;
     private float remainingTime = 0.0f;
@@ -29,34 +32,30 @@ public class Lanes : MonoBehaviour
     private float remainingWallTime = 20.0f;
     private List<LaneObject> walls = new List<LaneObject>();
 
-    private Vector3 despawnPoint;
-
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 100.0f;
 
-        // Initialize teleport pads
-        // Get the only children of the teleport pads
-        GameObject pad = teleportPads.transform.GetChild(0).gameObject;
-
-        // Create lanes - 1 copies of it and place them in the correct position
-        List<GameObject> pads = new List<GameObject>();
-        pads.Add(pad);
+        // Create more teleport pads for every lane
+        GameObject pad = padObject.transform.GetChild(0).gameObject;
+        teleportPads.Add(pad);
         for (int i = 1; i < lanes; i++)
         {
-            GameObject newPad = Instantiate(pad, teleportPads.transform);
-            pads.Add(newPad);
+            GameObject newPad = Instantiate(pad, padObject.transform);
+            teleportPads.Add(newPad);
         }
 
         // Set the position of the teleport pads
-        for (int i = 0; i < pads.Count; i++)
+        for (int i = 0; i < teleportPads.Count; i++)
         {
-            GameObject padObject = pads[i];
+            GameObject padObject = teleportPads[i];
             Vector3 padPosition = playerSpawnPoint.position + new Vector3(i * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
             padObject.transform.position = padPosition;
         }
+
+        // Set the teleport pads depending on active state
+        SetTeleportPads(teleportEnabled);
     }
 
     // Update is called once per frame
@@ -156,6 +155,17 @@ public class Lanes : MonoBehaviour
             walls.RemoveAt(0);
             laneObjects.Remove(wall);
             Destroy(wall.gameObject);
+        }
+    }
+
+    private void SetTeleportPads(bool enabled)
+    {
+        teleportEnabled = enabled;
+
+        // Hide/unhide all teleport pads
+        foreach (GameObject pad in teleportPads)
+        {
+            pad.SetActive(enabled);
         }
     }
 }
