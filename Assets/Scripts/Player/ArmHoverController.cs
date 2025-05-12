@@ -11,7 +11,7 @@ public class ArmHoverController : MonoBehaviour
     public float handDistanceThreshold = 0.3f; // Horizontal distance needed (meters)
     public float minHandsHeight = -0.2f;      // How above the head the hands should be (meters) (negative means below)
 
-    private Vector3 basePosition;
+    private float baseYLevel;
     private float targetYOffset = 0f;
 
     // Hover energy bar
@@ -24,7 +24,7 @@ public class ArmHoverController : MonoBehaviour
 
     private void Start()
     {
-        basePosition = transform.position;
+        baseYLevel = transform.position.y;
         hoverBarUI.SetHoverBarValue(hoverCharge);
     }
 
@@ -59,7 +59,8 @@ public class ArmHoverController : MonoBehaviour
         }
 
         // Smoothly move XR Rig up or down
-        Vector3 desiredPosition = basePosition + Vector3.up * targetYOffset;
+        Vector3 desiredPosition = transform.position;
+        desiredPosition.y = baseYLevel + targetYOffset;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * liftDuration);
 
         // Update HoverEnergy Bar
