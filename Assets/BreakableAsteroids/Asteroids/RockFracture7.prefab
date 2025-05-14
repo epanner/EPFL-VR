@@ -1105,6 +1105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7416122610531726351}
+  - component: {fileID: -6929697492746238510}
   m_Layer: 0
   m_Name: RockFracture7
   m_TagString: Untagged
@@ -1227,6 +1228,18 @@ Transform:
   - {fileID: 2661514331184693178}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-6929697492746238510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342456525053472956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc44243a0df6b8345b63f7b961986318, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1379712855765733330
 GameObject:
   m_ObjectHideFlags: 0

@@ -58,8 +58,9 @@ public class LaserGun : MonoBehaviour
                         if (hittingTime >= destructionDelay)
                         {
                             SendHaptic(0.5f, 0.2f);
-                            Destroy(lastHit);
+                            lastHit.GetComponent<Asteroid>().FractureObject();
                             hittingTime = 0.0f;
+                            Destroy(lastHit);
                         }
                     }
                     else {

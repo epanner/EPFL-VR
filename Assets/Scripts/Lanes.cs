@@ -83,9 +83,14 @@ public class Lanes : MonoBehaviour
 
         foreach (LaneObject obstacle in laneObjects)
         {
-            // Move the obstacle in the specified direction
-            obstacle.transform.position += direction * Time.deltaTime * speed;
+            if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
+            {
+                // Move the obstacle in the specified direction
+                obstacle.transform.position += direction * Time.deltaTime * speed;
+            }
         }
+
+        laneObjects.RemoveAll(obstacle => obstacle == null); // didn't know how to handle it better
 
         // Despawn obstacles that are beyond the despawn point
         List<LaneObject> objectsToRemove = new List<LaneObject>();
