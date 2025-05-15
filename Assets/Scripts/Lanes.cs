@@ -19,7 +19,7 @@ public class Lanes : MonoBehaviour
     public bool teleportEnabled = false;
 
     // Lane objects
-    public GameObject obstacle;
+    public List<GameObject> asteroids;
     public GameObject bomb;
     public GameObject wall;
     public float bombChance = 0.1f;
@@ -82,9 +82,14 @@ public class Lanes : MonoBehaviour
 
         foreach (LaneObject obstacle in laneObjects)
         {
-            // Move the obstacle in the specified direction
-            obstacle.transform.position += direction * Time.deltaTime * speed;
+            if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
+            {
+                // Move the obstacle in the specified direction
+                obstacle.transform.position += direction * Time.deltaTime * speed;
+            }
         }
+
+        laneObjects.RemoveAll(obstacle => obstacle == null); // didn't know how to handle it better
 
         // Despawn obstacles that are beyond the despawn point
         List<LaneObject> objectsToRemove = new List<LaneObject>();
@@ -125,9 +130,11 @@ public class Lanes : MonoBehaviour
 
             // Calculate the spawn position based on the selected lane
             Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            // Which asteroids to take
+            GameObject asteroid = asteroids[Random.Range(0, asteroids.Count)];
 
             // Lane object to spawn
-            GameObject spawnObject = Random.Range(0.0f, 1.0f) < bombChance ? bomb : obstacle;
+            GameObject spawnObject = Random.Range(0.0f, 1.0f) < bombChance ? bomb : asteroid;
 
             GameObject newObstacle = Instantiate(spawnObject, spawnPosition, Quaternion.identity);
             newObstacle.transform.SetParent(transform);
