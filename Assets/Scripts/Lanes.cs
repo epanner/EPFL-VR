@@ -12,7 +12,7 @@ public class Lanes : MonoBehaviour
     public GameObject teleportPads;
 
     // Lane objects
-    public GameObject obstacle;
+    public List<GameObject> asteroids;
     public GameObject bomb;
     public GameObject wall;
     public float bombChance = 0.1f;
@@ -126,9 +126,11 @@ public class Lanes : MonoBehaviour
 
             // Calculate the spawn position based on the selected lane
             Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            // Which asteroids to take
+            GameObject asteroid = asteroids[Random.Range(0, asteroids.Count)];
 
             // Lane object to spawn
-            GameObject spawnObject = Random.Range(0.0f, 1.0f) < bombChance ? bomb : obstacle;
+            GameObject spawnObject = Random.Range(0.0f, 1.0f) < bombChance ? bomb : asteroid;
 
             GameObject newObstacle = Instantiate(spawnObject, spawnPosition, Quaternion.identity);
             newObstacle.transform.SetParent(transform);
