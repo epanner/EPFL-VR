@@ -27,4 +27,10 @@ public class LaneObject : MonoBehaviour
     {
         this.lanes = lanes;
     }
+
+    protected void DestroyLaneObject()
+    {
+        lanes.RemoveLaneObject(this);
+        Destroy(gameObject);
+    }
 }

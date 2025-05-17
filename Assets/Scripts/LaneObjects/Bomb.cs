@@ -5,11 +5,15 @@ public class Bomb : LaneObject
 {
     public float bombRadius = 5.0f;
 
+    private Rigidbody rb;
+
     private bool armed = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
     }
 
     // Update is called once per frame
@@ -18,12 +22,16 @@ public class Bomb : LaneObject
 
     }
 
-    public void Selected(SelectEnterEventArgs args)
+    public void SelectEntered(SelectEnterEventArgs args)
     {
-        Debug.Log("Bomb picked up");
         inLane = false;
         armed = true;
-        GetComponent<Rigidbody>().useGravity = true;
+        rb.isKinematic = false;
+    }
+
+    public void SelectExited(SelectExitEventArgs args)
+    {
+        rb.isKinematic = false;
     }
 
     // On a collision do a physics spherecast

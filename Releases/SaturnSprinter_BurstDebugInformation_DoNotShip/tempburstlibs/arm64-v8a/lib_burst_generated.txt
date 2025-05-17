@@ -11,7 +11,7 @@ Library: C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_gene
 --float-mode=Fast
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=C:\Data\Code\VR\Temp\Burst
---key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.40f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Data\Code\VR\Library\Burst
 --output=C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --pdb-search-paths=Temp/ManagedSymbols/
@@ -28,7 +28,7 @@ Library: C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_gene
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=C:\Data\Code\VR\Temp\Burst
---key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.40f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Data\Code\VR\Library\Burst
 --output=C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --pdb-search-paths=Temp/ManagedSymbols/
@@ -143,7 +143,7 @@ Library: C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_gene
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=C:\Data\Code\VR\Temp\Burst
---key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.40f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Data\Code\VR\Library\Burst
 --output=C:\Data\Code\VR\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --pdb-search-paths=Temp/ManagedSymbols/
