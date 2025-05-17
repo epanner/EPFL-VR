@@ -41,6 +41,8 @@ public class Lanes : MonoBehaviour
     private float lockPrevTime = 6.0f;
     private List<LaneObject> walls = new List<LaneObject>();
 
+    private bool active = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -70,6 +72,8 @@ public class Lanes : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!active) return;
+
         remainingTime -= Time.fixedDeltaTime;
         remainingWallTime -= Time.fixedDeltaTime;
 
@@ -243,20 +247,22 @@ public class Lanes : MonoBehaviour
         return teleportPads;
     }
 
-    public void EndGame()
+    public void ReInitGame()
     {
         foreach (LaneObject item in laneObjects)
         {
             Destroy(item.gameObject);
         }
-    }
 
-    public void ReInitGame()
-    {
         remainingWallTime = 20.0f;
         remainingTime = 0.0f;
         laneObjects = new List<LaneObject>();
         walls = new List<LaneObject>();
+    }
+
+    public void StartLanes(bool active)
+    {
+        this.active = active;
     }
 
     public void RemoveLaneObject(LaneObject laneObject)
