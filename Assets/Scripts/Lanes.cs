@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class Lanes : MonoBehaviour
@@ -174,5 +175,25 @@ public class Lanes : MonoBehaviour
         {
             pad.SetActive(enabled);
         }
+    }
+    public void EndGame()
+    {
+        foreach (LaneObject item in laneObjects)
+        {
+            Destroy(item.gameObject);
+        }
+
+        foreach (LaneObject item in walls)
+        {
+            Destroy(item.gameObject);
+        }
+    }
+
+    public void ReInitGame()
+    {
+        remainingWallTime = 20.0f;
+        remainingTime = 0.0f;
+        laneObjects = new List<LaneObject>();
+        walls = new List<LaneObject>();
     }
 }
