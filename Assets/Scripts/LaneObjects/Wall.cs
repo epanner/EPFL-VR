@@ -13,4 +13,13 @@ public class Wall : LaneObject
     {
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            GameManager.Instance.PlayerHit(3);
+            DestroyLaneObject();
+        }
+    }
 }

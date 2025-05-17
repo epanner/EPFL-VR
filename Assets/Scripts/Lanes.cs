@@ -7,64 +7,75 @@ public class Lanes : MonoBehaviour
     // Lane info
     public Transform obstacleSpawnPoint;
     public Transform playerSpawnPoint;
+    private Vector3 despawnPoint;
     public Vector3 direction = Vector3.forward;
 
-    // Teleport pads
-    public GameObject teleportPads;
+    private int lanes = 4;
+    private float laneWidth = 1.0f;
+    private float speed = 4.0f;
+
+    // Teleport function
+    public GameObject padObject;
+    private List<GameObject> teleportPads = new List<GameObject>();
+    public bool teleportEnabled = false;
 
     // Lane objects
     public List<GameObject> asteroids;
     public GameObject bomb;
     public GameObject wall;
+    public GameObject key;
+    public GameObject lockObject;
+    public GameObject gun;
     public float bombChance = 0.1f;
+    public float gunChance = 0.1f;
     private List<LaneObject> laneObjects = new List<LaneObject>();
-    private int lanes = 4;
 
-    private float laneWidth = 1.2f;
-    private float speed = 5.0f;
-
-    private float spawnInterval = 1.2f;
+    private float spawnInterval = 1.5f;
     private float remainingTime = 0.0f;
 
     private float wallInterval = 30.0f;
     private float remainingWallTime = 20.0f;
+    private bool keySpawned = false;
+    private float keyPrevTime = 10.0f;
+    private bool lockSpawned = false;
+    private float lockPrevTime = 6.0f;
     private List<LaneObject> walls = new List<LaneObject>();
 
-    private Vector3 despawnPoint;
-
+    private bool active = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 100.0f;
 
-        // Initialize teleport pads
-        // Get the only children of the teleport pads
-        GameObject pad = teleportPads.transform.GetChild(0).gameObject;
-
-        // Create lanes - 1 copies of it and place them in the correct position
-        List<GameObject> pads = new List<GameObject>();
-        pads.Add(pad);
+        // Create more teleport pads for every lane
+        GameObject pad = padObject.transform.GetChild(0).gameObject;
+        teleportPads.Add(pad);
         for (int i = 1; i < lanes; i++)
         {
-            GameObject newPad = Instantiate(pad, teleportPads.transform);
-            pads.Add(newPad);
+            GameObject newPad = Instantiate(pad, padObject.transform);
+            teleportPads.Add(newPad);
         }
 
         // Set the position of the teleport pads
-        for (int i = 0; i < pads.Count; i++)
+        for (int i = 0; i < teleportPads.Count; i++)
         {
-            GameObject padObject = pads[i];
+            GameObject padObject = teleportPads[i];
             Vector3 padPosition = playerSpawnPoint.position + new Vector3(i * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
             padObject.transform.position = padPosition;
         }
+
+        // Set the teleport pads depending on active state
+        EnableTeleportPads(teleportEnabled);
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        remainingTime -= Time.deltaTime;
-        remainingWallTime -= Time.deltaTime;
+        if (!active) return;
+
+        remainingTime -= Time.fixedDeltaTime;
+        remainingWallTime -= Time.fixedDeltaTime;
 
         // Spawn obstacles
         if (remainingTime < 0)
@@ -92,6 +103,9 @@ public class Lanes : MonoBehaviour
         }
 
         laneObjects.RemoveAll(obstacle => obstacle == null); // didn't know how to handle it better
+
+        // Remove picked up items
+        laneObjects.RemoveAll(obstacle => !obstacle.IsInLane());
 
         // Despawn obstacles that are beyond the despawn point
         List<LaneObject> objectsToRemove = new List<LaneObject>();
@@ -136,13 +150,63 @@ public class Lanes : MonoBehaviour
             GameObject asteroid = asteroids[Random.Range(0, asteroids.Count)];
 
             // Lane object to spawn
-            GameObject spawnObject = Random.Range(0.0f, 1.0f) < bombChance ? bomb : asteroid;
+            GameObject spawnObject = null;
+            if (Random.Range(0.0f, 1.0f) < bombChance)
+            {
+                spawnObject = bomb;
+            }
+            else if (Random.Range(0.0f, 1.0f) < gunChance)
+            {
+                spawnObject = gun;
+            }
+            else
+            {
+                spawnObject = asteroid;
+            }
 
             GameObject newObstacle = Instantiate(spawnObject, spawnPosition, Quaternion.identity);
             newObstacle.transform.SetParent(transform);
             LaneObject laneObject = newObstacle.GetComponent<LaneObject>();
             laneObject.AddedToLane(this);
             laneObjects.Add(laneObject);
+        }
+
+        // Spawn key
+        if (!keySpawned && remainingWallTime < keyPrevTime)
+        {
+            int laneIndex = Random.Range(0, lanes);
+            while (selectedLanes.Contains(laneIndex))
+            {
+                laneIndex = Random.Range(0, lanes);
+            }
+
+            selectedLanes.Add(laneIndex);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            GameObject newKey = Instantiate(key, spawnPosition, Quaternion.identity);
+            newKey.transform.SetParent(transform);
+            LaneObject laneObject = newKey.GetComponent<LaneObject>();
+            laneObject.AddedToLane(this);
+            laneObjects.Add(laneObject);
+            keySpawned = true;
+        }
+
+        // Spawn lock
+        if (!lockSpawned && remainingWallTime < lockPrevTime)
+        {
+            int laneIndex = Random.Range(0, lanes);
+            while (selectedLanes.Contains(laneIndex))
+            {
+                laneIndex = Random.Range(0, lanes);
+            }
+
+            selectedLanes.Add(laneIndex);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            GameObject newLock = Instantiate(lockObject, spawnPosition, Quaternion.identity);
+            newLock.transform.SetParent(transform);
+            LaneObject laneObject = newLock.GetComponent<LaneObject>();
+            laneObject.AddedToLane(this);
+            laneObjects.Add(laneObject);
+            lockSpawned = true;
         }
     }
 
@@ -167,24 +231,46 @@ public class Lanes : MonoBehaviour
         }
     }
 
-    public void EndGame()
+    public void EnableTeleportPads(bool enabled)
+    {
+        teleportEnabled = enabled;
+
+        // Hide/unhide all teleport pads
+        foreach (GameObject pad in teleportPads)
+        {
+            pad.SetActive(enabled);
+        }
+    }
+
+    public List<GameObject> GetTeleportPads()
+    {
+        return teleportPads;
+    }
+
+    public void ReInitGame()
     {
         foreach (LaneObject item in laneObjects)
         {
             Destroy(item.gameObject);
         }
 
-        foreach (LaneObject item in walls)
-        {
-            Destroy(item.gameObject);
-        }
-    }
-
-    public void ReInitGame()
-    {
         remainingWallTime = 20.0f;
         remainingTime = 0.0f;
         laneObjects = new List<LaneObject>();
         walls = new List<LaneObject>();
+    }
+
+    public void StartLanes(bool active)
+    {
+        this.active = active;
+    }
+
+    public void RemoveLaneObject(LaneObject laneObject)
+    {
+        laneObjects.Remove(laneObject);
+        if (walls.Contains(laneObject))
+        {
+            walls.Remove(laneObject);
+        }
     }
 }

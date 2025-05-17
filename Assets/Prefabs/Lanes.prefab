@@ -254,11 +254,16 @@ MonoBehaviour:
   obstacleSpawnPoint: {fileID: 4654659749261499664}
   playerSpawnPoint: {fileID: 2379905820024753232}
   direction: {x: 0, y: 0, z: 1}
-  teleportPads: {fileID: 7767213821035738010}
-  obstacle: {fileID: 1615401992869403919, guid: e4342aa4058feec48909ece25a4aa850, type: 3}
-  bomb: {fileID: 1086213859811869279, guid: c11f72f9a58b91047972ad3c26847443, type: 3}
-  wall: {fileID: 4268836460064866044, guid: 2dacd9b863888174dbbf8ad5f3bcf9b0, type: 3}
+  padObject: {fileID: 7767213821035738010}
+  teleportEnabled: 1
+  asteroids: []
+  bomb: {fileID: 4355708729919361885, guid: 058fe9b489177f74a8076923cdc4d0c8, type: 3}
+  wall: {fileID: 2439933777761477018, guid: fcf0434de7931ff42915e79272ea644b, type: 3}
+  key: {fileID: 8940684873855578345, guid: 520740ba915699a4b9f9246a873d9a3c, type: 3}
+  lockObject: {fileID: 1616791869829328062, guid: b2bc5ac94c0ce304fa4a47636b9afc62, type: 3}
+  gun: {fileID: 205263626528272733, guid: 52148a37ad7da764c9121c9c610514af, type: 3}
   bombChance: 0.1
+  gunChance: 0.1
 --- !u!1001 &4708289543065276837
 PrefabInstance:
   m_ObjectHideFlags: 0

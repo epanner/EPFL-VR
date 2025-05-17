@@ -10,13 +10,13 @@ public class Asteroid : LaneObject
     {
         Instantiate(fractured, transform.position, transform.rotation); //Spawn in the broken version
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Destroy(gameObject);
-            GameManager.Instance.GameOver();
+            GameManager.Instance.PlayerHit();
+            DestroyLaneObject();
         }
     }
 }

@@ -10,7 +10,7 @@ public class XROriginSwitcher : MonoBehaviour
 
     [Header("Fade Settings")]
     public CanvasGroup fadeCanvas;   // assign your FadeImage's CanvasGroup here
-    public float      fadeDuration = 1f;
+    public float fadeDuration = 1f;
 
     /// <summary>
     /// Hook this up to your Play button OnClick.
@@ -18,6 +18,7 @@ public class XROriginSwitcher : MonoBehaviour
     public void SwitchToGameWithFade()
     {
         StartCoroutine(FadeAndSwitch());
+        GameManager.Instance.Start();
     }
 
     IEnumerator FadeAndSwitch()
@@ -27,7 +28,7 @@ public class XROriginSwitcher : MonoBehaviour
 
         // 2) Switch origins
         if (startOrigin != null) startOrigin.SetActive(false);
-        if (gameOrigin  != null) gameOrigin.SetActive(true);
+        if (gameOrigin != null) gameOrigin.SetActive(true);
 
         // 3) Fade in
         yield return StartCoroutine(Fade(1f, 0f, fadeDuration * 0.5f));
