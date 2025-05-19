@@ -76,10 +76,22 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    public void StartGame()
+    public void StartGame(int level)
     {
         SwitchToGameWithFade();
-        lanes.StartLanes(true);
+        switch (level)
+        {
+            case 1:
+                health = 15;
+                break;
+            case 2:
+                health = 5;
+                break;
+            default:
+                health = 3;
+                break;
+        }
+        lanes.InitGame(level);
     }
 
     public void PlayerHit(int damage = 1)
@@ -114,11 +126,10 @@ public class GameManager : MonoBehaviour
         lanes.StartLanes(false);
     }
 
-    public void ReInitGame()
+    public void BackToStart()
     {
         SwitchToStartWithFade();
-        lanes.ReInitGame();
-        health = 3; // Reset health
+        lanes.CleanGame();
 
         if (gameOverUI != null)
             gameOverUI.SetActive(false); // Hide Game Over UI
