@@ -48,5 +48,6 @@ public class Bomb : LaneObject
                 Destroy(hit.collider.gameObject);
             }
         }
+        Destroy(gameObject);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class GameManager : MonoBehaviour
 
     [Header("UIs")]
     public GameObject gameOverUI;
+
+    [Header("Controllers")]
+    public XRBaseInputInteractor leftInteractor;
+    public XRBaseInputInteractor rightInteractor;
 
     [Header("Origins")]
     public GameObject startOrigin;
@@ -80,11 +85,25 @@ public class GameManager : MonoBehaviour
     public void PlayerHit(int damage = 1)
     {
         Debug.Log("Player Hit!");
+        BothControllerHaptics(0.2f, 0.2f);
         health -= damage;
         if (health <= 0)
         {
             GameOver();
         }
+    }
+    
+    public void GrenadeExploded()
+    {
+        Debug.Log("Grenade");
+        BothControllerHaptics(0.5f, 0.5f);
+    }
+
+    public void BothControllerHaptics(float intensity, float duration)
+    {
+        leftInteractor?.SendHapticImpulse(intensity, duration);
+        rightInteractor?.SendHapticImpulse(intensity, duration);
+        Debug.Log("haptics sent");
     }
 
     private void GameOver()
