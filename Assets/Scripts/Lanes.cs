@@ -84,6 +84,8 @@ public class Lanes : MonoBehaviour
             {
                 SpawnWall();
                 remainingWallTime = wallInterval;
+                keySpawned = false;
+                lockSpawned = false;
                 remainingTime += 5.0f;
             }
 
