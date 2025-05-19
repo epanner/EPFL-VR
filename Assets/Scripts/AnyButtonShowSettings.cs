@@ -15,12 +15,6 @@ public class AnyButtonShowSettings : MonoBehaviour
     {
         // Create an action that fires on first press of any of these:
         anyButton = new InputAction(type: InputActionType.Button);
-        anyButton.AddBinding("<XRController>{LeftHand}/trigger");
-        anyButton.AddBinding("<XRController>{RightHand}/trigger");
-        anyButton.AddBinding("<XRController>{LeftHand}/gripButton");
-        anyButton.AddBinding("<XRController>{RightHand}/gripButton");
-        anyButton.AddBinding("<XRController>{LeftHand}/primaryButton");
-        anyButton.AddBinding("<XRController>{RightHand}/primaryButton");
         anyButton.AddBinding("<XRController>{LeftHand}/secondaryButton");
         anyButton.AddBinding("<XRController>{RightHand}/secondaryButton");
         anyButton.AddBinding("<XRController>/menu");  // universal menu

@@ -54,11 +54,7 @@ public class SettingsScreenController : MonoBehaviour
             binding: "<XRController>{LeftHand}/trigger",
             interactions: "press"
         );
-        anyClick.AddBinding("<XRController>{RightHand}/trigger");
-        anyClick.AddBinding("<XRController>{LeftHand}/primaryButton");
-        anyClick.AddBinding("<XRController>{LeftHand}/secondaryButton");
-        anyClick.AddBinding("<XRController>{RightHand}/primaryButton");
-        anyClick.AddBinding("<XRController>{RightHand}/secondaryButton");
+        anyClick.AddBinding("<XRController>{LeftHand}/menu");
         anyClick.performed += OnAnyClick;
         anyClick.Enable();
     }
