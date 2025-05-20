@@ -78,7 +78,6 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(int level)
     {
-        SwitchToGameWithFade();
         switch (level)
         {
             case 1:
@@ -91,13 +90,15 @@ public class GameManager : MonoBehaviour
                 health = 3;
                 break;
         }
+        SwitchToGameWithFade();
+        gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
     }
 
     public void PlayerHit(int damage = 1)
     {
         Debug.Log("Player Hit!");
-        BothControllerHaptics(0.2f, 0.2f);
+        BothControllerHaptics(0.2f, 0.1f);
         health -= damage;
         if (health <= 0)
         {
@@ -108,7 +109,7 @@ public class GameManager : MonoBehaviour
     public void GrenadeExploded()
     {
         Debug.Log("Grenade");
-        BothControllerHaptics(0.5f, 0.5f);
+        BothControllerHaptics(0.8f, 0.2f);
     }
 
     public void BothControllerHaptics(float intensity, float duration)
