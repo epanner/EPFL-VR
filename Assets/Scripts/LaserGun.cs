@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -9,7 +10,9 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 public class LaserGun : LaneObject
 {
     private LineRenderer lineRenderer;
-    public InputActionProperty shootAction;
+    public InputActionProperty leftShootAction;
+    public InputActionProperty rightShootAction;
+    private InputActionProperty currentShootAction;
     public GameObject laserOrigin;
     private IXRSelectInteractor currentInteractor = null;
     public float laserLength = 50f;
@@ -21,7 +24,6 @@ public class LaserGun : LaneObject
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        shootAction.action.Enable();
 
         // Register to grab/release events
         var grabInteractable = GetComponent<XRGrabInteractable>();
@@ -37,13 +39,12 @@ public class LaserGun : LaneObject
 
     private void Update()
     {
-        bool isShooting = shootAction.action.IsPressed();
-        Vector3 start = laserOrigin.transform.position;
-        Vector3 dir = laserOrigin.transform.forward;
-        Vector3 end = start + dir * laserLength;
-
-        if (currentInteractor != null && isShooting)
+        if (currentInteractor != null && currentShootAction.action.IsPressed())
         {
+            Vector3 start = laserOrigin.transform.position;
+            Vector3 dir = laserOrigin.transform.forward;
+            Vector3 end = start + dir * laserLength;
+
             lineRenderer.SetPosition(0, start);
             lineRenderer.SetPosition(1, end);
             lineRenderer.enabled = true;
@@ -90,6 +91,19 @@ public class LaserGun : LaneObject
     {
         currentInteractor = arg0.interactorObject;
 
+        // Determine which hand is grabbing the gun
+
+        if (currentInteractor.handedness == InteractorHandedness.Left)
+        {
+            currentShootAction = leftShootAction;
+        }
+        else if (currentInteractor.handedness == InteractorHandedness.Right)
+        {
+            currentShootAction = rightShootAction;
+        }
+
+        currentShootAction.action.Enable(); // Re-enable after rebinding
+
         inLane = false;
         rb.isKinematic = false;
     }
@@ -98,6 +112,8 @@ public class LaserGun : LaneObject
     {
         if (currentInteractor == args.interactorObject)
             currentInteractor = null;
+
+        currentShootAction.action.Disable();
 
         rb.isKinematic = false;
     }

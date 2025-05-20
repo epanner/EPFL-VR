@@ -74,8 +74,8 @@ public class Lanes : MonoBehaviour
         if (level == 1)
         {
             speed = 2.0f;
-            bombChance = 0.2f;
-            gunChance = 0.2f;
+            bombChance = 0.3f;
+            gunChance = 0.3f;
 
             laneObjects = new List<LaneObject>();
             walls = new List<LaneObject>();

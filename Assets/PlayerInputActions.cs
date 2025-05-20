@@ -92,9 +92,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ""id"": ""59aee838-d59c-4aeb-b83f-986ee3f1ddee"",
             ""actions"": [
                 {
-                    ""name"": ""Shoot"",
+                    ""name"": ""LeftShoot"",
                     ""type"": ""Button"",
                     ""id"": ""84627584-5650-46e2-ab8e-1b880473883d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightShoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""cc53df45-6d36-47e1-9c4b-c90b25e339f8"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -105,11 +114,22 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3e37c1a2-e5b7-4c5b-a3ee-d35dcf0ca2c1"",
-                    ""path"": ""<XRController>/{TriggerButton}"",
+                    ""path"": ""<XRController>{LeftHand}/{TriggerButton}"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Shoot"",
+                    ""action"": ""LeftShoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16be0392-11b5-4fb3-aa4a-5c5879400f29"",
+                    ""path"": ""<XRController>{RightHand}/{TriggerButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightShoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -120,7 +140,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
 }");
         // XRControls
         m_XRControls = asset.FindActionMap("XRControls", throwIfNotFound: true);
-        m_XRControls_Shoot = m_XRControls.FindAction("Shoot", throwIfNotFound: true);
+        m_XRControls_LeftShoot = m_XRControls.FindAction("LeftShoot", throwIfNotFound: true);
+        m_XRControls_RightShoot = m_XRControls.FindAction("RightShoot", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -201,7 +222,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     // XRControls
     private readonly InputActionMap m_XRControls;
     private List<IXRControlsActions> m_XRControlsActionsCallbackInterfaces = new List<IXRControlsActions>();
-    private readonly InputAction m_XRControls_Shoot;
+    private readonly InputAction m_XRControls_LeftShoot;
+    private readonly InputAction m_XRControls_RightShoot;
     /// <summary>
     /// Provides access to input actions defined in input action map "XRControls".
     /// </summary>
@@ -214,9 +236,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public XRControlsActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "XRControls/Shoot".
+        /// Provides access to the underlying input action "XRControls/LeftShoot".
         /// </summary>
-        public InputAction @Shoot => m_Wrapper.m_XRControls_Shoot;
+        public InputAction @LeftShoot => m_Wrapper.m_XRControls_LeftShoot;
+        /// <summary>
+        /// Provides access to the underlying input action "XRControls/RightShoot".
+        /// </summary>
+        public InputAction @RightShoot => m_Wrapper.m_XRControls_RightShoot;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -243,9 +269,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_XRControlsActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_XRControlsActionsCallbackInterfaces.Add(instance);
-            @Shoot.started += instance.OnShoot;
-            @Shoot.performed += instance.OnShoot;
-            @Shoot.canceled += instance.OnShoot;
+            @LeftShoot.started += instance.OnLeftShoot;
+            @LeftShoot.performed += instance.OnLeftShoot;
+            @LeftShoot.canceled += instance.OnLeftShoot;
+            @RightShoot.started += instance.OnRightShoot;
+            @RightShoot.performed += instance.OnRightShoot;
+            @RightShoot.canceled += instance.OnRightShoot;
         }
 
         /// <summary>
@@ -257,9 +286,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="XRControlsActions" />
         private void UnregisterCallbacks(IXRControlsActions instance)
         {
-            @Shoot.started -= instance.OnShoot;
-            @Shoot.performed -= instance.OnShoot;
-            @Shoot.canceled -= instance.OnShoot;
+            @LeftShoot.started -= instance.OnLeftShoot;
+            @LeftShoot.performed -= instance.OnLeftShoot;
+            @LeftShoot.canceled -= instance.OnLeftShoot;
+            @RightShoot.started -= instance.OnRightShoot;
+            @RightShoot.performed -= instance.OnRightShoot;
+            @RightShoot.canceled -= instance.OnRightShoot;
         }
 
         /// <summary>
@@ -301,11 +333,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     public interface IXRControlsActions
     {
         /// <summary>
-        /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "LeftShoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnShoot(InputAction.CallbackContext context);
+        void OnLeftShoot(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RightShoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRightShoot(InputAction.CallbackContext context);
     }
 }

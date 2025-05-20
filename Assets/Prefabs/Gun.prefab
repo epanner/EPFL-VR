@@ -310,18 +310,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dece5b8023a9fa846be06431d44510dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootAction:
+  leftShootAction:
     m_UseReference: 1
     m_Action:
-      m_Name: Shoot
+      m_Name: Left Shoot
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: e3b8ae9e-5b8b-418a-81ca-18aa1325403f
+      m_Id: 444d7c3a-2427-4091-a5ef-c1b862305568
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 3104835805961918824, guid: 72e26b68329046344bc7a14f0f184a81, type: 3}
+  rightShootAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Right Shoot
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ba786dae-c2b4-43ae-8bd1-31e235a3eb29
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 5671536000005511338, guid: 72e26b68329046344bc7a14f0f184a81, type: 3}
   laserOrigin: {fileID: 8655580253828323482}
   laserLength: 50
   destructionDelay: 1
