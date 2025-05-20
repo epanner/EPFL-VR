@@ -15,7 +15,7 @@ public class ArmHoverController : MonoBehaviour
     private float targetYOffset = 0f;
 
     // Hover energy bar
-    [SerializeField] private HoverBarUI hoverBarUI;
+    [SerializeField] private GameObject hoverBar;
 
     public float hoverCharge = 0f; // Default hover charge
     public float drainRate = 0.1f;
@@ -53,7 +53,7 @@ public class ArmHoverController : MonoBehaviour
                 break;
         }
         
-        hoverBarUI.SetHoverBarValue(hoverCharge);
+        hoverBar.GetComponent<HoverBarUI>().SetHoverBarValue(hoverCharge);
     }
 
     private void Update()
@@ -88,7 +88,7 @@ public class ArmHoverController : MonoBehaviour
 
         // Update HoverEnergy Bar
         hoverCharge = Mathf.Clamp01(hoverCharge);
-        hoverBarUI.SetHoverBarValue(hoverCharge);
+        hoverBar.GetComponent<HoverBarUI>().SetHoverBarValue(hoverCharge);
     }
 
     private void LateUpdate()

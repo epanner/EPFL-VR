@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -6,10 +7,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // Singleton reference
     public Lanes lanes;
-    public int health = 3; // Player's health
 
     [Header("UIs")]
     public GameObject gameOverUI;
+    public GameObject gameUI;
 
     [Header("Controllers")]
     public XRBaseInputInteractor leftInteractor;
@@ -22,6 +23,21 @@ public class GameManager : MonoBehaviour
     [Header("Fade Settings")]
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 1f;
+    private int health = 3;
+    private TempLaneObject leftItem;
+    private TempLaneObject rightItem;
+
+    private void Update()
+    {
+        if (leftItem != null)
+        {
+            gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
+        }
+        if (rightItem != null)
+        {
+            gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+        }
+    }
 
     public void SwitchToGameWithFade()
     {
@@ -40,7 +56,7 @@ public class GameManager : MonoBehaviour
         // 3) Fade in
         yield return StartCoroutine(Fade(1f, 0f, fadeDuration * 0.5f));
     }
-    
+
     public void SwitchToStartWithFade()
     {
         StartCoroutine(FadeAndSwitchToStart());
@@ -93,11 +109,12 @@ public class GameManager : MonoBehaviour
         SwitchToGameWithFade();
         gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
+        gameUI.SetActive(true);
     }
 
     public void PlayerHit(int damage = 1)
     {
-        Debug.Log("Player Hit!");
+        Debug.Log("Player Hit! " + health + " live(s) left...");
         BothControllerHaptics(0.2f, 0.1f);
         health -= damage;
         if (health <= 0)
@@ -105,7 +122,7 @@ public class GameManager : MonoBehaviour
             GameOver();
         }
     }
-    
+
     public void GrenadeExploded()
     {
         Debug.Log("Grenade");
@@ -116,13 +133,12 @@ public class GameManager : MonoBehaviour
     {
         leftInteractor?.SendHapticImpulse(intensity, duration);
         rightInteractor?.SendHapticImpulse(intensity, duration);
-        Debug.Log("haptics sent");
     }
 
     private void GameOver()
     {
-        if (gameOverUI != null)
-            gameOverUI.SetActive(true); // Show Game Over UI
+        gameUI.SetActive(false);
+        gameOverUI.SetActive(true); // Show Game Over UI
 
         lanes.StartLanes(false);
     }
@@ -134,5 +150,29 @@ public class GameManager : MonoBehaviour
 
         if (gameOverUI != null)
             gameOverUI.SetActive(false); // Hide Game Over UI
+    }
+
+    public void SetLeftItem(TempLaneObject item)
+    {
+        leftItem = item;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
+    }
+
+    public void SetRightItem(TempLaneObject item)
+    {
+        rightItem = item;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
+    }
+
+    public void RemoveLeftItem()
+    {
+        leftItem = null;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
+    }
+
+    public void RemoveRightItem()
+    {
+        rightItem = null;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 
-public class LaserGun : LaneObject
+public class LaserGun : TempLaneObject
 {
     private LineRenderer lineRenderer;
     public InputActionProperty leftShootAction;
@@ -17,11 +17,8 @@ public class LaserGun : LaneObject
     private IXRSelectInteractor currentInteractor = null;
     private float laserLength = 50f;
     private float destructionDelay = 1.0f;
-    private float selfDestructionDelay = 15.0f;
     private GameObject lastHit;
     private float hittingTime = 0.0f;
-    private float grabbingTime = 0.0f;
-    private bool isGrabbed = false;
     private Rigidbody rb;
 
     private void Awake()
@@ -51,51 +48,51 @@ public class LaserGun : LaneObject
             Destroy(gameObject);
         }
         if (currentInteractor != null && currentShootAction.action.IsPressed())
+        {
+            Vector3 start = laserOrigin.transform.position;
+            Vector3 dir = laserOrigin.transform.forward;
+            Vector3 end = start + dir * laserLength;
+
+            lineRenderer.SetPosition(0, start);
+            lineRenderer.SetPosition(1, end);
+            lineRenderer.enabled = true;
+
+            if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
             {
-                Vector3 start = laserOrigin.transform.position;
-                Vector3 dir = laserOrigin.transform.forward;
-                Vector3 end = start + dir * laserLength;
+                lineRenderer.SetPosition(1, hit.point);
 
-                lineRenderer.SetPosition(0, start);
-                lineRenderer.SetPosition(1, end);
-                lineRenderer.enabled = true;
-
-                if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
+                // If it hits something tagged "Obstacle", destroy it
+                if (hit.collider.CompareTag("Obstacle"))
                 {
-                    lineRenderer.SetPosition(1, hit.point);
-
-                    // If it hits something tagged "Obstacle", destroy it
-                    if (hit.collider.CompareTag("Obstacle"))
+                    SendHaptic(0.1f, 0.05f);
+                    if (hit.collider.gameObject == lastHit)
                     {
-                        SendHaptic(0.1f, 0.05f);
-                        if (hit.collider.gameObject == lastHit)
+                        hittingTime += Time.deltaTime;
+                        if (hittingTime >= destructionDelay)
                         {
-                            hittingTime += Time.deltaTime;
-                            if (hittingTime >= destructionDelay)
-                            {
-                                SendHaptic(0.5f, 0.2f);
-                                lastHit.GetComponent<Asteroid>().FractureObject();
-                                hittingTime = 0.0f;
-                                Destroy(lastHit);
-                            }
-                        }
-                        else
-                        {
-                            lastHit = hit.collider.gameObject;
+                            SendHaptic(0.5f, 0.2f);
+                            lastHit.GetComponent<Asteroid>().FractureObject();
                             hittingTime = 0.0f;
+                            Destroy(lastHit);
                         }
-
                     }
                     else
                     {
-                        lastHit = null;
+                        lastHit = hit.collider.gameObject;
+                        hittingTime = 0.0f;
                     }
+
+                }
+                else
+                {
+                    lastHit = null;
                 }
             }
-            else
-            {
-                lineRenderer.enabled = false;
-            }
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+        }
     }
 
     private void OnGrab(SelectEnterEventArgs arg0)
@@ -108,10 +105,12 @@ public class LaserGun : LaneObject
         if (currentInteractor.handedness == InteractorHandedness.Left)
         {
             currentShootAction = leftShootAction;
+            GameManager.Instance.SetLeftItem(this);
         }
         else if (currentInteractor.handedness == InteractorHandedness.Right)
         {
             currentShootAction = rightShootAction;
+            GameManager.Instance.SetRightItem(this);
         }
 
         currentShootAction.action.Enable(); // Re-enable after rebinding
@@ -122,6 +121,15 @@ public class LaserGun : LaneObject
 
     private void OnRelease(SelectExitEventArgs args)
     {
+        if (currentInteractor.handedness == InteractorHandedness.Left)
+        {
+            GameManager.Instance.RemoveLeftItem();
+        }
+        else if (currentInteractor.handedness == InteractorHandedness.Right)
+        {
+            GameManager.Instance.RemoveRightItem();
+        }
+        
         if (currentInteractor == args.interactorObject)
             currentInteractor = null;
 
