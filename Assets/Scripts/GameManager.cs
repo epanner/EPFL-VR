@@ -107,6 +107,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
         SwitchToGameWithFade();
+        AudioManager.Instance.PlayBackgroundMusic();
         gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
         gameUI.SetActive(true);
