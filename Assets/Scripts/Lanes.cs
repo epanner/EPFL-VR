@@ -47,7 +47,7 @@ public class Lanes : MonoBehaviour
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 100.0f;
-
+    
         // Create more teleport pads for every lane
         GameObject pad = padObject.transform.GetChild(0).gameObject;
         teleportPads.Add(pad);
@@ -67,6 +67,92 @@ public class Lanes : MonoBehaviour
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
+    }
+
+    public void InitGame(int level)
+    {
+        if (level == 1)
+        {
+            speed = 2.0f;
+            bombChance = 0.3f;
+            gunChance = 0.3f;
+
+            laneObjects = new List<LaneObject>();
+            walls = new List<LaneObject>();
+            teleportPads = new List<GameObject>();
+
+            spawnInterval = 5.0f;
+            wallInterval = 60.0f;
+
+            remainingTime = 0.0f;
+            remainingWallTime = 40.0f;
+
+            keySpawned = false;
+            keyPrevTime = 30.0f;
+
+            lockSpawned = false;
+            lockPrevTime = 26.0f;
+        }
+        else if (level == 2)
+        {
+            speed = 4.0f;
+            bombChance = 0.1f;
+            gunChance = 0.1f;
+
+            laneObjects = new List<LaneObject>();
+            walls = new List<LaneObject>();
+            teleportPads = new List<GameObject>();
+
+            spawnInterval = 1.5f;
+            wallInterval = 30.0f;
+
+            remainingTime = 0.0f;
+            remainingWallTime = 20.0f;
+
+            keySpawned = false;
+            keyPrevTime = 10.0f;
+
+            lockSpawned = false;
+            lockPrevTime = 6.0f;
+
+            teleportEnabled = false;
+        }
+        else if (level == 3)
+        {
+            speed = 6.0f;
+            bombChance = 0.05f;
+            gunChance = 0.02f;
+
+            laneObjects = new List<LaneObject>();
+            walls = new List<LaneObject>();
+            teleportPads = new List<GameObject>();
+
+            spawnInterval = 1.5f;
+            wallInterval = 25.0f;
+
+            remainingTime = 0.0f;
+            remainingWallTime = 20.0f;
+
+            keySpawned = false;
+            keyPrevTime = 10.0f;
+
+            lockSpawned = false;
+            lockPrevTime = 6.0f;
+
+            teleportEnabled = false;
+        }
+
+        // Set the teleport pads depending on active state
+        EnableTeleportPads(teleportEnabled);
+        active = true;
+    }
+
+    public void CleanGame()
+    {
+        foreach (LaneObject item in laneObjects)
+        {
+            Destroy(item.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -247,19 +333,6 @@ public class Lanes : MonoBehaviour
     public List<GameObject> GetTeleportPads()
     {
         return teleportPads;
-    }
-
-    public void ReInitGame()
-    {
-        foreach (LaneObject item in laneObjects)
-        {
-            Destroy(item.gameObject);
-        }
-
-        remainingWallTime = 20.0f;
-        remainingTime = 0.0f;
-        laneObjects = new List<LaneObject>();
-        walls = new List<LaneObject>();
     }
 
     public void StartLanes(bool active)

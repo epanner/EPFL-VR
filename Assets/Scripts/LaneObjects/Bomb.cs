@@ -48,6 +48,7 @@ public class Bomb : LaneObject
                 Destroy(hit.collider.gameObject);
             }
         }
+        GameManager.Instance.GrenadeExploded();
         Destroy(gameObject);
     }
 }

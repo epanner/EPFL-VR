@@ -6,9 +6,18 @@
             "id": "59aee838-d59c-4aeb-b83f-986ee3f1ddee",
             "actions": [
                 {
-                    "name": "Shoot",
+                    "name": "LeftShoot",
                     "type": "Button",
                     "id": "84627584-5650-46e2-ab8e-1b880473883d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightShoot",
+                    "type": "Button",
+                    "id": "cc53df45-6d36-47e1-9c4b-c90b25e339f8",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -19,11 +28,22 @@
                 {
                     "name": "",
                     "id": "3e37c1a2-e5b7-4c5b-a3ee-d35dcf0ca2c1",
-                    "path": "<XRController>/{TriggerButton}",
+                    "path": "<XRController>{LeftHand}/{TriggerButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shoot",
+                    "action": "LeftShoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "16be0392-11b5-4fb3-aa4a-5c5879400f29",
+                    "path": "<XRController>{RightHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightShoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
