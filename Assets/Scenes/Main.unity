@@ -11622,6 +11622,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 355054834}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 1775478831}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: BackToStart
@@ -15226,6 +15238,7 @@ MonoBehaviour:
   gameOrigin: {fileID: 268760737}
   fadeCanvas: {fileID: 1125708657}
   fadeDuration: 1
+  gameTimer: 0
   scoreRecord: 0
   lastScore: 0
   level: 0

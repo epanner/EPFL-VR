@@ -29,10 +29,10 @@ public class GameManager : MonoBehaviour
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 1f;
     private int health = 3;
-    private float scoreMultiplier = 1.0f;
+    private Func<float, float> ScoreFunction { get; set; } = x => x * x;
     private TempLaneObject leftItem;
     private TempLaneObject rightItem;
-    private float gameTimer = 0.0f;
+    public float gameTimer = 0.0f;
     private int currentScore = 0;
     [HideInInspector] public int scoreRecord = 0;
     [HideInInspector] public int lastScore = 0;
@@ -59,15 +59,15 @@ public class GameManager : MonoBehaviour
         {
             case 1:
                 health = 15;
-                scoreMultiplier = 0.01f;
+                ScoreFunction = x => 0.01f * x * x;
                 break;
             case 2:
                 health = 5;
-                scoreMultiplier = 1.0f;
+                ScoreFunction = x => x * x;
                 break;
             default:
                 health = 3;
-                scoreMultiplier = 2.0f;
+                ScoreFunction = x => x * x * Mathf.Log(1f + x);
                 break;
         }
         SwitchToGameWithFade();
@@ -98,10 +98,10 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         inGame = false;
-        Time.timeScale = 0.0f;
         lanes.StartLanes(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(true); // Show Game Over UI
+        Time.timeScale = 0.0f;
     }
 
     public void GamePaused()
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        currentScore = Mathf.RoundToInt(scoreMultiplier * gameTimer * gameTimer);
+        currentScore = Mathf.RoundToInt(ScoreFunction(gameTimer));
         gameUI.GetComponent<GameUI>().SetScore(currentScore);
     }
 
