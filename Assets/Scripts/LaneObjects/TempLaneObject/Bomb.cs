@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-public class Bomb : LaneObject
+public class Bomb : TempLaneObject
 {
     public float bombRadius = 5.0f;
 
@@ -19,11 +20,32 @@ public class Bomb : LaneObject
     // Update is called once per frame
     void Update()
     {
-
+        if (isGrabbed)
+        {
+            grabbingTime += Time.deltaTime;
+        }
+        if (grabbingTime > selfDestructionDelay)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void SelectEntered(SelectEnterEventArgs args)
     {
+        isGrabbed = true;
+        currentInteractor = args.interactorObject;
+
+        // Determine which hand is grabbing the gun
+
+        if (currentInteractor.handedness == InteractorHandedness.Left)
+        {
+            GameManager.Instance.SetLeftItem(this);
+        }
+        else if (currentInteractor.handedness == InteractorHandedness.Right)
+        {
+            GameManager.Instance.SetRightItem(this);
+        }
+
         inLane = false;
         armed = true;
         rb.isKinematic = false;
@@ -31,6 +53,19 @@ public class Bomb : LaneObject
 
     public void SelectExited(SelectExitEventArgs args)
     {
+        isGrabbed = false;
+        if (currentInteractor.handedness == InteractorHandedness.Left)
+        {
+            GameManager.Instance.RemoveLeftItem();
+        }
+        else if (currentInteractor.handedness == InteractorHandedness.Right)
+        {
+            GameManager.Instance.RemoveRightItem();
+        }
+        
+        if (currentInteractor == args.interactorObject)
+            currentInteractor = null;
+
         rb.isKinematic = false;
     }
 

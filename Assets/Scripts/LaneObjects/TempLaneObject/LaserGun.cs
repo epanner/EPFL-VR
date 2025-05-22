@@ -14,7 +14,6 @@ public class LaserGun : TempLaneObject
     public InputActionProperty rightShootAction;
     private InputActionProperty currentShootAction;
     public GameObject laserOrigin;
-    private IXRSelectInteractor currentInteractor = null;
     private float laserLength = 50f;
     private float destructionDelay = 1.0f;
     private GameObject lastHit;
