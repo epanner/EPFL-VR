@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -11,6 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("UIs")]
     public GameObject gameOverUI;
     public GameObject gameUI;
+    public GameObject welcomeUI;
 
     [Header("Controllers")]
     public XRBaseInputInteractor leftInteractor;
@@ -24,11 +27,58 @@ public class GameManager : MonoBehaviour
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 1f;
     private int health = 3;
+    private float scoreMultiplier = 1.0f;
     private TempLaneObject leftItem;
     private TempLaneObject rightItem;
+    private bool inGame = false;
+    private float gameTimer = 0.0f;
+    private int currentScore = 0;
+    [HideInInspector] public int scoreRecord = 0;
+    [HideInInspector] public int lastScore = 0;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        welcomeUI.GetComponent<WelcomeUI>().SetLastScore(0);
+        welcomeUI.GetComponent<WelcomeUI>().SetRecord(0);
+    }
+
+    public void StartGame(int level)
+    {
+        switch (level)
+        {
+            case 1:
+                health = 15;
+                scoreMultiplier = 0.01f;
+                break;
+            case 2:
+                health = 5;
+                scoreMultiplier = 1.0f;
+                break;
+            default:
+                health = 3;
+                scoreMultiplier = 2.0f;
+                break;
+        }
+        SwitchToGameWithFade();
+        gameOrigin.GetComponent<ArmHoverController>().Init(level);
+        lanes.InitGame(level);
+        gameUI.GetComponent<GameUI>().InitUI(health, currentScore);
+        gameUI.SetActive(true);
+        inGame = true;
+    }
 
     private void Update()
     {
+        if (inGame)
+        {
+            gameTimer += Time.deltaTime;
+            UpdateScoreUI();
+        }
         if (leftItem != null)
         {
             gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
@@ -37,6 +87,91 @@ public class GameManager : MonoBehaviour
         {
             gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
         }
+    }
+
+    private void GameOver()
+    {
+        inGame = false;
+        gameUI.SetActive(false);
+        gameOverUI.SetActive(true); // Show Game Over UI
+
+        lanes.StartLanes(false);
+    }
+
+    public void BackToStart()
+    {
+        SaveAndReInitCurrentScore();
+        SwitchToStartWithFade();
+        lanes.CleanGame();
+
+        if (gameOverUI != null)
+            gameOverUI.SetActive(false); // Hide Game Over UI
+    }
+
+    private void UpdateScoreUI()
+    {
+        currentScore = Mathf.RoundToInt(scoreMultiplier * gameTimer * gameTimer);
+        gameUI.GetComponent<GameUI>().SetScore(currentScore);
+    }
+
+    public void PlayerHit(int damage = 1)
+    {
+        BothControllerHaptics(0.2f, 0.1f);
+        health -= damage;
+        if (health <= 0)
+        {
+            GameOver();
+        }
+        gameUI.GetComponent<GameUI>().SetHealth(health);
+    }
+
+    public void GrenadeExploded()
+    {
+        Debug.Log("Grenade");
+        BothControllerHaptics(0.8f, 0.2f);
+    }
+
+    public void BothControllerHaptics(float intensity, float duration)
+    {
+        leftInteractor?.SendHapticImpulse(intensity, duration);
+        rightInteractor?.SendHapticImpulse(intensity, duration);
+    }
+
+    private void SaveAndReInitCurrentScore()
+    {
+        lastScore = currentScore;
+        if (currentScore > scoreRecord)
+        {
+            scoreRecord = currentScore;
+        }
+        welcomeUI.GetComponent<WelcomeUI>().SetLastScore(lastScore);
+        welcomeUI.GetComponent<WelcomeUI>().SetRecord(scoreRecord);
+        currentScore = 0;
+        gameTimer = 0.0f;
+    }
+
+    public void SetLeftItem(TempLaneObject item)
+    {
+        leftItem = item;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
+    }
+
+    public void SetRightItem(TempLaneObject item)
+    {
+        rightItem = item;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
+    }
+
+    public void RemoveLeftItem()
+    {
+        leftItem = null;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
+    }
+
+    public void RemoveRightItem()
+    {
+        rightItem = null;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 
     public void SwitchToGameWithFade()
@@ -85,95 +220,5 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         fadeCanvas.alpha = to;
-    }
-
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    public void StartGame(int level)
-    {
-        switch (level)
-        {
-            case 1:
-                health = 15;
-                break;
-            case 2:
-                health = 5;
-                break;
-            default:
-                health = 3;
-                break;
-        }
-        SwitchToGameWithFade();
-        AudioManager.Instance.PlayBackgroundMusic();
-        gameOrigin.GetComponent<ArmHoverController>().Init(level);
-        lanes.InitGame(level);
-        gameUI.SetActive(true);
-    }
-
-    public void PlayerHit(int damage = 1)
-    {
-        Debug.Log("Player Hit! " + health + " live(s) left...");
-        BothControllerHaptics(0.2f, 0.1f);
-        health -= damage;
-        if (health <= 0)
-        {
-            GameOver();
-        }
-    }
-
-    public void GrenadeExploded()
-    {
-        Debug.Log("Grenade");
-        BothControllerHaptics(0.8f, 0.2f);
-    }
-
-    public void BothControllerHaptics(float intensity, float duration)
-    {
-        leftInteractor?.SendHapticImpulse(intensity, duration);
-        rightInteractor?.SendHapticImpulse(intensity, duration);
-    }
-
-    private void GameOver()
-    {
-        gameUI.SetActive(false);
-        gameOverUI.SetActive(true); // Show Game Over UI
-
-        lanes.StartLanes(false);
-    }
-
-    public void BackToStart()
-    {
-        SwitchToStartWithFade();
-        lanes.CleanGame();
-
-        if (gameOverUI != null)
-            gameOverUI.SetActive(false); // Hide Game Over UI
-    }
-
-    public void SetLeftItem(TempLaneObject item)
-    {
-        leftItem = item;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
-    }
-
-    public void SetRightItem(TempLaneObject item)
-    {
-        rightItem = item;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
-    }
-
-    public void RemoveLeftItem()
-    {
-        leftItem = null;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
-    }
-
-    public void RemoveRightItem()
-    {
-        rightItem = null;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 }
