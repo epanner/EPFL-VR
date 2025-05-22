@@ -27,8 +27,8 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Played Music Background");
-        PlayBackgroundMusic();
+        //Debug.Log("Played Music Background");
+        //PlayBackgroundMusic();
     }
 
     public void PlayBackgroundMusic()

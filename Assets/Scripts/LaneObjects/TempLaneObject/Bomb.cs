@@ -35,6 +35,8 @@ public class Bomb : TempLaneObject
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.inGame) return;
+        
         if (isGrabbed)
         {
             grabbingTime += Time.deltaTime;
@@ -62,6 +64,7 @@ public class Bomb : TempLaneObject
         }
 
         inLane = false;
+        GameManager.Instance.AddToDestroy(gameObject);
         armed = true;
         rb.isKinematic = false;
     }

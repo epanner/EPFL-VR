@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     [Header("UIs")]
     public GameObject gameOverUI;
+    public GameObject gamePausedUI;
     public GameObject gameUI;
     public GameObject welcomeUI;
 
@@ -30,12 +32,13 @@ public class GameManager : MonoBehaviour
     private float scoreMultiplier = 1.0f;
     private TempLaneObject leftItem;
     private TempLaneObject rightItem;
-    private bool inGame = false;
     private float gameTimer = 0.0f;
     private int currentScore = 0;
     [HideInInspector] public int scoreRecord = 0;
     [HideInInspector] public int lastScore = 0;
     [HideInInspector] public int level;
+    [HideInInspector] public bool inGame = false;
+    private List<GameObject> toDestroy = new List<GameObject>();
 
     private void Awake()
     {
@@ -50,6 +53,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(int level)
     {
+        Time.timeScale = 1.0f;
         this.level = level;
         switch (level)
         {
@@ -80,34 +84,47 @@ public class GameManager : MonoBehaviour
         {
             gameTimer += Time.deltaTime;
             UpdateScoreUI();
-        }
-        if (leftItem != null)
-        {
-            gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
-        }
-        if (rightItem != null)
-        {
-            gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+            if (leftItem != null)
+            {
+                gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
+            }
+            if (rightItem != null)
+            {
+                gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+            }
         }
     }
 
     private void GameOver()
     {
         inGame = false;
+        Time.timeScale = 0.0f;
+        lanes.StartLanes(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(true); // Show Game Over UI
+    }
 
+    public void GamePaused()
+    {
+        inGame = false;
         lanes.StartLanes(false);
+        gamePausedUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void GameResumed()
+    {
+        Time.timeScale = 1f;
+        lanes.StartLanes(true);
+        inGame = true;
     }
 
     public void BackToStart()
     {
+        Time.timeScale = 1f;
+        Clean();
         SaveAndReInitCurrentScore();
         SwitchToStartWithFade();
-        lanes.CleanGame();
-
-        if (gameOverUI != null)
-            gameOverUI.SetActive(false); // Hide Game Over UI
     }
 
     private void UpdateScoreUI()
@@ -222,5 +239,19 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         fadeCanvas.alpha = to;
+    }
+
+    public void AddToDestroy(GameObject item)
+    {
+        toDestroy.Add(item);
+    }
+
+    private void Clean()
+    {
+        lanes.CleanGame();
+        foreach (GameObject item in toDestroy)
+        {
+            Destroy(item);
+        }
     }
 }

@@ -56,59 +56,62 @@ public class LaserGun : TempLaneObject
 
     private void Update()
     {
-        if (isGrabbed)
+        if (GameManager.Instance.inGame)
         {
-            grabbingTime += Time.deltaTime;
-        }
-        if (grabbingTime > selfDestructionDelay)
-        {
-            Destroy(gameObject);
-        }
-        if (currentInteractor != null && currentShootAction.action.IsPressed())
-        {
-            Vector3 start = laserOrigin.transform.position;
-            Vector3 dir = laserOrigin.transform.forward;
-            Vector3 end = start + dir * laserLength;
-
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, end);
-            lineRenderer.enabled = true;
-
-            if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
+            if (isGrabbed)
             {
-                lineRenderer.SetPosition(1, hit.point);
-
-                // If it hits something tagged "Obstacle", destroy it
-                if (hit.collider.CompareTag("Obstacle"))
+                grabbingTime += Time.deltaTime;
+            }
+            if (grabbingTime > selfDestructionDelay)
+            {
+                Destroy(gameObject);
+            }
+            if (currentInteractor != null && currentShootAction.action.IsPressed())
+            {
+                Vector3 start = laserOrigin.transform.position;
+                Vector3 dir = laserOrigin.transform.forward;
+                Vector3 end = start + dir * laserLength;
+    
+                lineRenderer.SetPosition(0, start);
+                lineRenderer.SetPosition(1, end);
+                lineRenderer.enabled = true;
+    
+                if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
                 {
-                    SendHaptic(0.1f, 0.05f);
-                    if (hit.collider.gameObject == lastHit)
+                    lineRenderer.SetPosition(1, hit.point);
+    
+                    // If it hits something tagged "Obstacle", destroy it
+                    if (hit.collider.CompareTag("Obstacle"))
                     {
-                        hittingTime += Time.deltaTime;
-                        if (hittingTime >= destructionDelay)
+                        SendHaptic(0.1f, 0.05f);
+                        if (hit.collider.gameObject == lastHit)
                         {
-                            SendHaptic(0.5f, 0.2f);
-                            lastHit.GetComponent<Asteroid>().FractureObject();
-                            hittingTime = 0.0f;
-                            Destroy(lastHit);
+                            hittingTime += Time.deltaTime;
+                            if (hittingTime >= destructionDelay)
+                            {
+                                SendHaptic(0.5f, 0.2f);
+                                lastHit.GetComponent<Asteroid>().FractureObject();
+                                hittingTime = 0.0f;
+                                Destroy(lastHit);
+                            }
                         }
+                        else
+                        {
+                            lastHit = hit.collider.gameObject;
+                            hittingTime = 0.0f;
+                        }
+    
                     }
                     else
                     {
-                        lastHit = hit.collider.gameObject;
-                        hittingTime = 0.0f;
+                        lastHit = null;
                     }
-
-                }
-                else
-                {
-                    lastHit = null;
                 }
             }
-        }
-        else
-        {
-            lineRenderer.enabled = false;
+            else
+            {
+                lineRenderer.enabled = false;
+            }
         }
     }
 
@@ -133,6 +136,7 @@ public class LaserGun : TempLaneObject
         currentShootAction.action.Enable(); // Re-enable after rebinding
 
         inLane = false;
+        GameManager.Instance.AddToDestroy(gameObject);
         rb.isKinematic = false;
     }
 
