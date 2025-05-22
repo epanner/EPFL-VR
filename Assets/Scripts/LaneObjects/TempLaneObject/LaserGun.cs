@@ -34,6 +34,24 @@ public class LaserGun : TempLaneObject
 
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
+        switch (GameManager.Instance.level)
+        {
+            case 1:
+                laserLength = 100f;
+                destructionDelay = 1.0f;
+                selfDestructionDelay = 30.0f;
+                break;
+            case 2:
+                laserLength = 50f;
+                destructionDelay = 1.0f;
+                selfDestructionDelay = 15.0f;
+                break;
+            case 3:
+                laserLength = 30f;
+                destructionDelay = 1.5f;
+                selfDestructionDelay = 10f;
+                break;
+        }
     }
 
     private void Update()

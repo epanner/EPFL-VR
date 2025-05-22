@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     private int currentScore = 0;
     [HideInInspector] public int scoreRecord = 0;
     [HideInInspector] public int lastScore = 0;
+    [HideInInspector] public int level;
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(int level)
     {
+        this.level = level;
         switch (level)
         {
             case 1:

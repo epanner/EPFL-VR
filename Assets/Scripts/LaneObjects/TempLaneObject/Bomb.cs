@@ -13,6 +13,21 @@ public class Bomb : TempLaneObject
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        switch (GameManager.Instance.level)
+        {
+            case 1:
+                bombRadius = 15.0f;
+                selfDestructionDelay = 30.0f;
+                break;
+            case 2:
+                bombRadius = 10.0f;
+                selfDestructionDelay = 15.0f;
+                break;
+            case 3:
+                bombRadius = 5.0f;
+                selfDestructionDelay = 10f;
+                break;
+        }
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
     }
