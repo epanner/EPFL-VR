@@ -1,4 +1,7 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -10,7 +13,9 @@ public class GameManager : MonoBehaviour
 
     [Header("UIs")]
     public GameObject gameOverUI;
+    public GameObject gamePausedUI;
     public GameObject gameUI;
+    public GameObject welcomeUI;
 
     [Header("Controllers")]
     public XRBaseInputInteractor leftInteractor;
@@ -24,19 +29,168 @@ public class GameManager : MonoBehaviour
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 1f;
     private int health = 3;
+    private Func<float, float> ScoreFunction { get; set; } = x => x * x;
     private TempLaneObject leftItem;
     private TempLaneObject rightItem;
+    public float gameTimer = 0.0f;
+    private int currentScore = 0;
+    [HideInInspector] public int scoreRecord = 0;
+    [HideInInspector] public int lastScore = 0;
+    [HideInInspector] public int level;
+    [HideInInspector] public bool inGame = false;
+    private List<GameObject> toDestroy = new List<GameObject>();
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        welcomeUI.GetComponent<WelcomeUI>().SetLastScore(0);
+        welcomeUI.GetComponent<WelcomeUI>().SetRecord(0);
+    }
+
+    public void StartGame(int level)
+    {
+        Time.timeScale = 1.0f;
+        this.level = level;
+        switch (level)
+        {
+            case 1:
+                health = 15;
+                ScoreFunction = x => 0.01f * x * x;
+                break;
+            case 2:
+                health = 5;
+                ScoreFunction = x => x * x;
+                break;
+            default:
+                health = 3;
+                ScoreFunction = x => x * x * Mathf.Log(1f + x);
+                break;
+        }
+        SwitchToGameWithFade();
+        gameOrigin.GetComponent<ArmHoverController>().Init(level);
+        lanes.InitGame(level);
+        gameUI.GetComponent<GameUI>().InitUI(health, currentScore);
+        gameUI.SetActive(true);
+        inGame = true;
+    }
 
     private void Update()
     {
-        if (leftItem != null)
+        if (inGame)
         {
-            gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
+            gameTimer += Time.deltaTime;
+            UpdateScoreUI();
+            if (leftItem != null)
+            {
+                gameUI.GetComponent<GameUI>().SetLeftBarValue(leftItem.GetPercentage());
+            }
+            if (rightItem != null)
+            {
+                gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+            }
         }
-        if (rightItem != null)
+    }
+
+    public void GameOver()
+    {
+        inGame = false;
+        lanes.StartLanes(false);
+        gameUI.SetActive(false);
+        gameOverUI.SetActive(true); // Show Game Over UI
+        Time.timeScale = 0.0f;
+    }
+
+    public void GamePaused()
+    {
+        inGame = false;
+        lanes.StartLanes(false);
+        gamePausedUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void GameResumed()
+    {
+        Time.timeScale = 1f;
+        lanes.StartLanes(true);
+        inGame = true;
+    }
+
+    public void BackToStart()
+    {
+        Time.timeScale = 1f;
+        Clean();
+        SaveAndReInitCurrentScore();
+        SwitchToStartWithFade();
+    }
+
+    private void UpdateScoreUI()
+    {
+        currentScore = Mathf.RoundToInt(ScoreFunction(gameTimer));
+        gameUI.GetComponent<GameUI>().SetScore(currentScore);
+    }
+
+    public void PlayerHit(int damage = 1)
+    {
+        BothControllerHaptics(0.2f, 0.1f);
+        health -= damage;
+        if (health <= 0)
         {
-            gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+            GameOver();
         }
+        gameUI.GetComponent<GameUI>().SetHealth(health);
+    }
+
+    public void GrenadeExploded()
+    {
+        Debug.Log("Grenade");
+        BothControllerHaptics(0.8f, 0.2f);
+    }
+
+    public void BothControllerHaptics(float intensity, float duration)
+    {
+        leftInteractor?.SendHapticImpulse(intensity, duration);
+        rightInteractor?.SendHapticImpulse(intensity, duration);
+    }
+
+    private void SaveAndReInitCurrentScore()
+    {
+        lastScore = currentScore;
+        if (currentScore > scoreRecord)
+        {
+            scoreRecord = currentScore;
+        }
+        welcomeUI.GetComponent<WelcomeUI>().SetLastScore(lastScore);
+        welcomeUI.GetComponent<WelcomeUI>().SetRecord(scoreRecord);
+        currentScore = 0;
+        gameTimer = 0.0f;
+    }
+
+    public void SetLeftItem(TempLaneObject item)
+    {
+        leftItem = item;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
+    }
+
+    public void SetRightItem(TempLaneObject item)
+    {
+        rightItem = item;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
+    }
+
+    public void RemoveLeftItem()
+    {
+        leftItem = null;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
+    }
+
+    public void RemoveRightItem()
+    {
+        rightItem = null;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 
     public void SwitchToGameWithFade()
@@ -87,92 +241,17 @@ public class GameManager : MonoBehaviour
         fadeCanvas.alpha = to;
     }
 
-    private void Awake()
+    public void AddToDestroy(GameObject item)
     {
-        Instance = this;
+        toDestroy.Add(item);
     }
 
-    public void StartGame(int level)
+    private void Clean()
     {
-        switch (level)
-        {
-            case 1:
-                health = 15;
-                break;
-            case 2:
-                health = 5;
-                break;
-            default:
-                health = 3;
-                break;
-        }
-        SwitchToGameWithFade();
-        gameOrigin.GetComponent<ArmHoverController>().Init(level);
-        lanes.InitGame(level);
-        gameUI.SetActive(true);
-    }
-
-    public void PlayerHit(int damage = 1)
-    {
-        Debug.Log("Player Hit! " + health + " live(s) left...");
-        BothControllerHaptics(0.2f, 0.1f);
-        health -= damage;
-        if (health <= 0)
-        {
-            GameOver();
-        }
-    }
-
-    public void GrenadeExploded()
-    {
-        Debug.Log("Grenade");
-        BothControllerHaptics(0.8f, 0.2f);
-    }
-
-    public void BothControllerHaptics(float intensity, float duration)
-    {
-        leftInteractor?.SendHapticImpulse(intensity, duration);
-        rightInteractor?.SendHapticImpulse(intensity, duration);
-    }
-
-    private void GameOver()
-    {
-        gameUI.SetActive(false);
-        gameOverUI.SetActive(true); // Show Game Over UI
-
-        lanes.StartLanes(false);
-    }
-
-    public void BackToStart()
-    {
-        SwitchToStartWithFade();
         lanes.CleanGame();
-
-        if (gameOverUI != null)
-            gameOverUI.SetActive(false); // Hide Game Over UI
-    }
-
-    public void SetLeftItem(TempLaneObject item)
-    {
-        leftItem = item;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
-    }
-
-    public void SetRightItem(TempLaneObject item)
-    {
-        rightItem = item;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
-    }
-
-    public void RemoveLeftItem()
-    {
-        leftItem = null;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
-    }
-
-    public void RemoveRightItem()
-    {
-        rightItem = null;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
+        foreach (GameObject item in toDestroy)
+        {
+            Destroy(item);
+        }
     }
 }

@@ -40,13 +40,13 @@ public class ArmHoverController : MonoBehaviour
             case 2:
                 hoverCharge = 0.0f;
                 drainRate = 0.1f;
-                rechargeRate = 0.01f;
+                rechargeRate = 0.1f;
                 needsRefill = true;
                 break;
             case 3:
                 hoverCharge = 0.0f;
                 drainRate = 0.2f;
-                rechargeRate = 0.01f;
+                rechargeRate = 0.1f;
                 needsRefill = true;
                 break;
             default:
@@ -58,6 +58,8 @@ public class ArmHoverController : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager.Instance.inGame) return;
+
         if (needsRefill)
         {
             targetYOffset = 0f;
@@ -93,6 +95,8 @@ public class ArmHoverController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!GameManager.Instance.inGame) return;
+
         // Moving XR Rig up or down after any other movement (from joystick for example)
         Vector3 rigPos = transform.position;
 

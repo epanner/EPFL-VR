@@ -12,7 +12,7 @@ public class Lanes : MonoBehaviour
 
     private int lanes = 4;
     private float laneWidth = 1.0f;
-    private float speed = 4.0f;
+    private System.Func<float, float> GetSpeed { get; set; }
 
     // Teleport function
     public GameObject padObject;
@@ -46,7 +46,7 @@ public class Lanes : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        despawnPoint = obstacleSpawnPoint.position + direction * 100.0f;
+        despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
     
         // Create more teleport pads for every lane
         GameObject pad = padObject.transform.GetChild(0).gameObject;
@@ -73,7 +73,7 @@ public class Lanes : MonoBehaviour
     {
         if (level == 1)
         {
-            speed = 2.0f;
+            GetSpeed = x => 2.0f;
             bombChance = 0.3f;
             gunChance = 0.3f;
 
@@ -95,7 +95,7 @@ public class Lanes : MonoBehaviour
         }
         else if (level == 2)
         {
-            speed = 4.0f;
+            GetSpeed = x => 4.0f;
             bombChance = 0.1f;
             gunChance = 0.1f;
 
@@ -119,19 +119,19 @@ public class Lanes : MonoBehaviour
         }
         else if (level == 3)
         {
-            speed = 6.0f;
+            GetSpeed = x => 2f * Mathf.Log(1f + x);
             bombChance = 0.05f;
-            gunChance = 0.02f;
+            gunChance = 0.05f;
 
             laneObjects = new List<LaneObject>();
             walls = new List<LaneObject>();
             teleportPads = new List<GameObject>();
 
-            spawnInterval = 1.5f;
-            wallInterval = 25.0f;
+            spawnInterval = 1f;
+            wallInterval = 20.0f;
 
-            remainingTime = 0.0f;
-            remainingWallTime = 20.0f;
+            remainingTime = 5.0f;
+            remainingWallTime = 15.0f;
 
             keySpawned = false;
             keyPrevTime = 10.0f;
@@ -186,7 +186,7 @@ public class Lanes : MonoBehaviour
             if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
             {
                 // Move the obstacle in the specified direction
-                obstacle.transform.position += direction * Time.deltaTime * speed;
+                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer);
             }
         }
 

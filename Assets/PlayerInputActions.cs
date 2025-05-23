@@ -108,6 +108,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""8c1655aa-6aa7-46fd-90a7-638c716b9bd9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -132,6 +141,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""RightShoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4a9db97f-f4d9-4a8c-bbf0-f58a5492e8e2"",
+                    ""path"": ""<XRController>{LeftHand}/{MenuButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -142,6 +162,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_XRControls = asset.FindActionMap("XRControls", throwIfNotFound: true);
         m_XRControls_LeftShoot = m_XRControls.FindAction("LeftShoot", throwIfNotFound: true);
         m_XRControls_RightShoot = m_XRControls.FindAction("RightShoot", throwIfNotFound: true);
+        m_XRControls_OpenMenu = m_XRControls.FindAction("OpenMenu", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -224,6 +245,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IXRControlsActions> m_XRControlsActionsCallbackInterfaces = new List<IXRControlsActions>();
     private readonly InputAction m_XRControls_LeftShoot;
     private readonly InputAction m_XRControls_RightShoot;
+    private readonly InputAction m_XRControls_OpenMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "XRControls".
     /// </summary>
@@ -243,6 +265,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "XRControls/RightShoot".
         /// </summary>
         public InputAction @RightShoot => m_Wrapper.m_XRControls_RightShoot;
+        /// <summary>
+        /// Provides access to the underlying input action "XRControls/OpenMenu".
+        /// </summary>
+        public InputAction @OpenMenu => m_Wrapper.m_XRControls_OpenMenu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -275,6 +301,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightShoot.started += instance.OnRightShoot;
             @RightShoot.performed += instance.OnRightShoot;
             @RightShoot.canceled += instance.OnRightShoot;
+            @OpenMenu.started += instance.OnOpenMenu;
+            @OpenMenu.performed += instance.OnOpenMenu;
+            @OpenMenu.canceled += instance.OnOpenMenu;
         }
 
         /// <summary>
@@ -292,6 +321,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightShoot.started -= instance.OnRightShoot;
             @RightShoot.performed -= instance.OnRightShoot;
             @RightShoot.canceled -= instance.OnRightShoot;
+            @OpenMenu.started -= instance.OnOpenMenu;
+            @OpenMenu.performed -= instance.OnOpenMenu;
+            @OpenMenu.canceled -= instance.OnOpenMenu;
         }
 
         /// <summary>
@@ -346,5 +378,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRightShoot(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OpenMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenMenu(InputAction.CallbackContext context);
     }
 }
