@@ -9,6 +9,7 @@ public class Asteroid : LaneObject
     public void FractureObject()
     {
         Instantiate(fractured, transform.position, transform.rotation); //Spawn in the broken version
+        AudioManager.Instance.PlayBreakSound();
     }
 
     private void OnTriggerEnter(Collider other)

@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        AudioManager.Instance.PlaySpaceshipMusic();
     }
 
     public void StartGame(int level)
@@ -107,7 +108,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
         SwitchToGameWithFade();
-        AudioManager.Instance.PlayBackgroundMusic();
+        AudioManager.Instance.PlayGameMusic();
         gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
         gameUI.SetActive(true);
@@ -117,6 +118,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Player Hit! " + health + " live(s) left...");
         BothControllerHaptics(0.2f, 0.1f);
+        AudioManager.Instance.PlayPlayerHitSound();
         health -= damage;
         if (health <= 0)
         {
@@ -140,8 +142,10 @@ public class GameManager : MonoBehaviour
     {
         gameUI.SetActive(false);
         gameOverUI.SetActive(true); // Show Game Over UI
+        AudioManager.Instance?.PlayGameOverSound();
 
         lanes.StartLanes(false);
+
     }
 
     public void BackToStart()
@@ -157,12 +161,14 @@ public class GameManager : MonoBehaviour
     {
         leftItem = item;
         gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
+        AudioManager.Instance.PlayGrabSound();
     }
 
     public void SetRightItem(TempLaneObject item)
     {
         rightItem = item;
         gameUI.GetComponent<GameUI>().SetRightBarActive(true);
+        AudioManager.Instance.PlayGrabSound();
     }
 
     public void RemoveLeftItem()
