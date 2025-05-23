@@ -19,6 +19,11 @@ public class Lanes : MonoBehaviour
     private List<GameObject> teleportPads = new List<GameObject>();
     public bool teleportEnabled = false;
 
+    // Poke related
+    public GameObject buzzerPrefab;
+    private GameObject leftBuzzer;
+    private GameObject rightBuzzer;
+
     // Lane objects
     public List<GameObject> asteroids;
     public GameObject bomb;
@@ -61,9 +66,18 @@ public class Lanes : MonoBehaviour
         for (int i = 0; i < teleportPads.Count; i++)
         {
             GameObject padObject = teleportPads[i];
-            Vector3 padPosition = playerSpawnPoint.position + new Vector3(i * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 padPosition = playerSpawnPoint.position + new Vector3((i + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             padObject.transform.position = padPosition;
         }
+        padObject.SetActive(true);
+
+        // Instantiate the 2 buzzers
+        leftBuzzer = Instantiate(buzzerPrefab, transform);
+        leftBuzzer.transform.position = playerSpawnPoint.position + new Vector3((lanes + 1) * laneWidth / 2, 1, 0);
+        
+        rightBuzzer = Instantiate(buzzerPrefab, transform);
+        rightBuzzer.transform.position = playerSpawnPoint.position - new Vector3((lanes + 1) * laneWidth / 2, -1, 0);
+
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
@@ -233,7 +247,7 @@ public class Lanes : MonoBehaviour
             int laneIndex = selectedLanes[i];
 
             // Calculate the spawn position based on the selected lane
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             // Which asteroids to take
             GameObject asteroid = asteroids[Random.Range(0, asteroids.Count)];
 
@@ -269,7 +283,7 @@ public class Lanes : MonoBehaviour
             }
 
             selectedLanes.Add(laneIndex);
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             GameObject newKey = Instantiate(key, spawnPosition, Quaternion.identity);
             newKey.transform.SetParent(transform);
             LaneObject laneObject = newKey.GetComponent<LaneObject>();
@@ -288,7 +302,7 @@ public class Lanes : MonoBehaviour
             }
 
             selectedLanes.Add(laneIndex);
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             GameObject newLock = Instantiate(lockObject, spawnPosition, Quaternion.identity);
             newLock.transform.SetParent(transform);
             LaneObject laneObject = newLock.GetComponent<LaneObject>();
