@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        AudioManager.Instance.PlaySpaceshipMusic();
     }
 
     private void Start()
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
         SwitchToGameWithFade();
         gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
+        AudioManager.Instance.PlayGameMusic();
         gameUI.GetComponent<GameUI>().InitUI(health, currentScore);
         gameUI.SetActive(true);
         inGame = true;
@@ -136,18 +138,13 @@ public class GameManager : MonoBehaviour
     public void PlayerHit(int damage = 1)
     {
         BothControllerHaptics(0.2f, 0.1f);
+        AudioManager.Instance.PlayPlayerHitSound();
         health -= damage;
         if (health <= 0)
         {
             GameOver();
         }
         gameUI.GetComponent<GameUI>().SetHealth(health);
-    }
-
-    public void GrenadeExploded()
-    {
-        Debug.Log("Grenade");
-        BothControllerHaptics(0.8f, 0.2f);
     }
 
     public void BothControllerHaptics(float intensity, float duration)
@@ -167,30 +164,6 @@ public class GameManager : MonoBehaviour
         welcomeUI.GetComponent<WelcomeUI>().SetRecord(scoreRecord);
         currentScore = 0;
         gameTimer = 0.0f;
-    }
-
-    public void SetLeftItem(TempLaneObject item)
-    {
-        leftItem = item;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
-    }
-
-    public void SetRightItem(TempLaneObject item)
-    {
-        rightItem = item;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
-    }
-
-    public void RemoveLeftItem()
-    {
-        leftItem = null;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
-    }
-
-    public void RemoveRightItem()
-    {
-        rightItem = null;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 
     public void SwitchToGameWithFade()
@@ -241,55 +214,10 @@ public class GameManager : MonoBehaviour
         fadeCanvas.alpha = to;
     }
 
-    private void Awake()
-    {
-        Instance = this;
-        AudioManager.Instance.PlaySpaceshipMusic();
-    }
-
-    public void StartGame(int level)
-    {
-        switch (level)
-        {
-            case 1:
-                health = 15;
-                break;
-            case 2:
-                health = 5;
-                break;
-            default:
-                health = 3;
-                break;
-        }
-        SwitchToGameWithFade();
-        AudioManager.Instance.PlayGameMusic();
-        gameOrigin.GetComponent<ArmHoverController>().Init(level);
-        lanes.InitGame(level);
-        gameUI.SetActive(true);
-    }
-
-    public void PlayerHit(int damage = 1)
-    {
-        Debug.Log("Player Hit! " + health + " live(s) left...");
-        BothControllerHaptics(0.2f, 0.1f);
-        AudioManager.Instance.PlayPlayerHitSound();
-        health -= damage;
-        if (health <= 0)
-        {
-            GameOver();
-        }
-    }
-
     public void GrenadeExploded()
     {
         Debug.Log("Grenade");
         BothControllerHaptics(0.8f, 0.2f);
-    }
-
-    public void BothControllerHaptics(float intensity, float duration)
-    {
-        leftInteractor?.SendHapticImpulse(intensity, duration);
-        rightInteractor?.SendHapticImpulse(intensity, duration);
     }
 
     public void AddToDestroy(GameObject item)
