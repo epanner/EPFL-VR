@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GameOver()
+    public void GameOver()
     {
         inGame = false;
         lanes.StartLanes(false);
