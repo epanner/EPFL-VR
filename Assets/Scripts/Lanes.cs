@@ -12,12 +12,17 @@ public class Lanes : MonoBehaviour
 
     private int lanes = 4;
     private float laneWidth = 1.0f;
-    private float speed = 4.0f;
+    private System.Func<float, float> GetSpeed { get; set; }
 
     // Teleport function
     public GameObject padObject;
     private List<GameObject> teleportPads = new List<GameObject>();
     public bool teleportEnabled = false;
+
+    // Poke related
+    public GameObject buzzerPrefab;
+    private GameObject leftBuzzer;
+    private GameObject rightBuzzer;
 
     // Lane objects
     public List<GameObject> asteroids;
@@ -46,7 +51,7 @@ public class Lanes : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        despawnPoint = obstacleSpawnPoint.position + direction * 100.0f;
+        despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
     
         // Create more teleport pads for every lane
         GameObject pad = padObject.transform.GetChild(0).gameObject;
@@ -61,9 +66,18 @@ public class Lanes : MonoBehaviour
         for (int i = 0; i < teleportPads.Count; i++)
         {
             GameObject padObject = teleportPads[i];
-            Vector3 padPosition = playerSpawnPoint.position + new Vector3(i * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 padPosition = playerSpawnPoint.position + new Vector3((i + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             padObject.transform.position = padPosition;
         }
+        padObject.SetActive(true);
+
+        // Instantiate the 2 buzzers
+        leftBuzzer = Instantiate(buzzerPrefab, transform);
+        leftBuzzer.transform.position = playerSpawnPoint.position + new Vector3((lanes + 1) * laneWidth / 2, 1, 0);
+        
+        rightBuzzer = Instantiate(buzzerPrefab, transform);
+        rightBuzzer.transform.position = playerSpawnPoint.position - new Vector3((lanes + 1) * laneWidth / 2, -1, 0);
+
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
@@ -73,7 +87,7 @@ public class Lanes : MonoBehaviour
     {
         if (level == 1)
         {
-            speed = 2.0f;
+            GetSpeed = x => 2.0f;
             bombChance = 0.3f;
             gunChance = 0.3f;
 
@@ -95,7 +109,7 @@ public class Lanes : MonoBehaviour
         }
         else if (level == 2)
         {
-            speed = 4.0f;
+            GetSpeed = x => 4.0f;
             bombChance = 0.1f;
             gunChance = 0.1f;
 
@@ -119,19 +133,19 @@ public class Lanes : MonoBehaviour
         }
         else if (level == 3)
         {
-            speed = 6.0f;
+            GetSpeed = x => 2f * Mathf.Log(1f + x);
             bombChance = 0.05f;
-            gunChance = 0.02f;
+            gunChance = 0.05f;
 
             laneObjects = new List<LaneObject>();
             walls = new List<LaneObject>();
             teleportPads = new List<GameObject>();
 
-            spawnInterval = 1.5f;
-            wallInterval = 25.0f;
+            spawnInterval = 1f;
+            wallInterval = 20.0f;
 
-            remainingTime = 0.0f;
-            remainingWallTime = 20.0f;
+            remainingTime = 5.0f;
+            remainingWallTime = 15.0f;
 
             keySpawned = false;
             keyPrevTime = 10.0f;
@@ -186,7 +200,7 @@ public class Lanes : MonoBehaviour
             if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
             {
                 // Move the obstacle in the specified direction
-                obstacle.transform.position += direction * Time.deltaTime * speed;
+                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer);
             }
         }
 
@@ -233,7 +247,7 @@ public class Lanes : MonoBehaviour
             int laneIndex = selectedLanes[i];
 
             // Calculate the spawn position based on the selected lane
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             // Which asteroids to take
             GameObject asteroid = asteroids[Random.Range(0, asteroids.Count)];
 
@@ -269,7 +283,7 @@ public class Lanes : MonoBehaviour
             }
 
             selectedLanes.Add(laneIndex);
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             GameObject newKey = Instantiate(key, spawnPosition, Quaternion.identity);
             newKey.transform.SetParent(transform);
             LaneObject laneObject = newKey.GetComponent<LaneObject>();
@@ -288,7 +302,7 @@ public class Lanes : MonoBehaviour
             }
 
             selectedLanes.Add(laneIndex);
-            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3(laneIndex * laneWidth, 0, 0) - new Vector3(lanes * laneWidth / 2, 0, 0);
+            Vector3 spawnPosition = obstacleSpawnPoint.position + new Vector3((laneIndex + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
             GameObject newLock = Instantiate(lockObject, spawnPosition, Quaternion.identity);
             newLock.transform.SetParent(transform);
             LaneObject laneObject = newLock.GetComponent<LaneObject>();

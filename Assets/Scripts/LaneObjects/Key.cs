@@ -21,6 +21,7 @@ public class Key : LaneObject
     public void SelectEntered(SelectEnterEventArgs args)
     {
         inLane = false;
+        GameManager.Instance.AddToDestroy(gameObject);
         rb.isKinematic = false;
     }
 

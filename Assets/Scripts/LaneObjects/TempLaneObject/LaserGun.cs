@@ -14,7 +14,6 @@ public class LaserGun : TempLaneObject
     public InputActionProperty rightShootAction;
     private InputActionProperty currentShootAction;
     public GameObject laserOrigin;
-    private IXRSelectInteractor currentInteractor = null;
     private float laserLength = 50f;
     private float destructionDelay = 1.0f;
     private GameObject lastHit;
@@ -35,64 +34,85 @@ public class LaserGun : TempLaneObject
 
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
+        switch (GameManager.Instance.level)
+        {
+            case 1:
+                laserLength = 100f;
+                destructionDelay = 1.0f;
+                selfDestructionDelay = 30.0f;
+                break;
+            case 2:
+                laserLength = 50f;
+                destructionDelay = 1.0f;
+                selfDestructionDelay = 15.0f;
+                break;
+            case 3:
+                laserLength = 30f;
+                destructionDelay = 1.5f;
+                selfDestructionDelay = 10f;
+                break;
+        }
     }
 
     private void Update()
     {
-        if (isGrabbed)
+        if (GameManager.Instance.inGame)
         {
-            grabbingTime += Time.deltaTime;
-        }
-        if (grabbingTime > selfDestructionDelay)
-        {
-            Destroy(gameObject);
-        }
-        if (currentInteractor != null && currentShootAction.action.IsPressed())
-        {
-            Vector3 start = laserOrigin.transform.position;
-            Vector3 dir = laserOrigin.transform.forward;
-            Vector3 end = start + dir * laserLength;
-
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, end);
-            lineRenderer.enabled = true;
-            AudioManager.Instance.PlayShootSound();
-
-            if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
+            if (isGrabbed)
             {
-                lineRenderer.SetPosition(1, hit.point);
+                grabbingTime += Time.deltaTime;
+            }
+            if (grabbingTime > selfDestructionDelay)
+            {
+                Destroy(gameObject);
+            }
+            if (currentInteractor != null && currentShootAction.action.IsPressed())
+            {
+                Vector3 start = laserOrigin.transform.position;
+                Vector3 dir = laserOrigin.transform.forward;
+                Vector3 end = start + dir * laserLength;
 
-                // If it hits something tagged "Obstacle", destroy it
-                if (hit.collider.CompareTag("Obstacle"))
+                lineRenderer.SetPosition(0, start);
+                lineRenderer.SetPosition(1, end);
+                lineRenderer.enabled = true;
+                AudioManager.Instance.PlayShootSound();
+
+                if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
                 {
-                    SendHaptic(0.1f, 0.05f);
-                    if (hit.collider.gameObject == lastHit)
+                    lineRenderer.SetPosition(1, hit.point);
+
+                    // If it hits something tagged "Obstacle", destroy it
+                    if (hit.collider.CompareTag("Obstacle"))
                     {
-                        hittingTime += Time.deltaTime;
-                        if (hittingTime >= destructionDelay)
+                        SendHaptic(0.1f, 0.05f);
+                        if (hit.collider.gameObject == lastHit)
                         {
-                            SendHaptic(0.5f, 0.2f);
-                            lastHit.GetComponent<Asteroid>().FractureObject();
-                            hittingTime = 0.0f;
-                            Destroy(lastHit);
+                            hittingTime += Time.deltaTime;
+                            if (hittingTime >= destructionDelay)
+                            {
+                                SendHaptic(0.5f, 0.2f);
+                                lastHit.GetComponent<Asteroid>().FractureObject();
+                                hittingTime = 0.0f;
+                                Destroy(lastHit);
+                            }
                         }
+                        else
+                        {
+                            lastHit = hit.collider.gameObject;
+                            hittingTime = 0.0f;
+                        }
+
                     }
                     else
                     {
-                        lastHit = hit.collider.gameObject;
-                        hittingTime = 0.0f;
+                        lastHit = null;
                     }
-
-                }
-                else
-                {
-                    lastHit = null;
                 }
             }
-        }
-        else
-        {
-            lineRenderer.enabled = false;
+            else
+            {
+                lineRenderer.enabled = false;
+            }
         }
     }
 
@@ -117,6 +137,7 @@ public class LaserGun : TempLaneObject
         currentShootAction.action.Enable(); // Re-enable after rebinding
 
         inLane = false;
+        GameManager.Instance.AddToDestroy(gameObject);
         rb.isKinematic = false;
     }
 
@@ -130,7 +151,7 @@ public class LaserGun : TempLaneObject
         {
             GameManager.Instance.RemoveRightItem();
         }
-        
+
         if (currentInteractor == args.interactorObject)
             currentInteractor = null;
 
