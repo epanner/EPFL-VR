@@ -43,6 +43,16 @@ public class AudioManager : MonoBehaviour
         PlayMusic(gameMusic);
     }
 
+    public void PauseGameMusic()
+    {
+        musicSource.Pause();
+    }
+
+    public void ResumeGameMusic()
+    {
+        musicSource.Play();
+    }
+
     private void PlayMusic(AudioClip clip)
     {
         if (clip == null || musicSource == null) return;

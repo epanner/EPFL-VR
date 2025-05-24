@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         gameOverUI.SetActive(true); // Show Game Over UI
         Time.timeScale = 0.0f;
+        AudioManager.Instance.PauseGameMusic();
     }
 
     public void GamePaused()
@@ -112,6 +113,7 @@ public class GameManager : MonoBehaviour
         lanes.StartLanes(false);
         gamePausedUI.SetActive(true);
         Time.timeScale = 0f;
+        AudioManager.Instance.PauseGameMusic();
     }
 
     public void GameResumed()
@@ -119,6 +121,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         lanes.StartLanes(true);
         inGame = true;
+        AudioManager.Instance.ResumeGameMusic();
     }
 
     public void BackToStart()
@@ -127,6 +130,7 @@ public class GameManager : MonoBehaviour
         Clean();
         SaveAndReInitCurrentScore();
         SwitchToStartWithFade();
+        AudioManager.Instance.PlaySpaceshipMusic();
     }
 
     private void UpdateScoreUI()
@@ -137,8 +141,8 @@ public class GameManager : MonoBehaviour
 
     public void PlayerHit(int damage = 1)
     {
-        BothControllerHaptics(0.2f, 0.1f);
         AudioManager.Instance.PlayPlayerHitSound();
+        BothControllerHaptics(0.2f, 0.1f);
         health -= damage;
         if (health <= 0)
         {
