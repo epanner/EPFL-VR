@@ -52,7 +52,7 @@ public class Lanes : MonoBehaviour
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
-    
+
         // Create more teleport pads for every lane
         GameObject pad = padObject.transform.GetChild(0).gameObject;
         teleportPads.Add(pad);
@@ -74,7 +74,7 @@ public class Lanes : MonoBehaviour
         // Instantiate the 2 buzzers
         leftBuzzer = Instantiate(buzzerPrefab, transform);
         leftBuzzer.transform.position = playerSpawnPoint.position + new Vector3((lanes + 1) * laneWidth / 2, 1, 0);
-        
+
         rightBuzzer = Instantiate(buzzerPrefab, transform);
         rightBuzzer.transform.position = playerSpawnPoint.position - new Vector3((lanes + 1) * laneWidth / 2, -1, 0);
 
@@ -158,6 +158,9 @@ public class Lanes : MonoBehaviour
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
+        
+        leftBuzzer.GetComponent<Buzzer>().InitGame(level);
+        rightBuzzer.GetComponent<Buzzer>().InitGame(level);
         active = true;
     }
 
@@ -177,23 +180,21 @@ public class Lanes : MonoBehaviour
         remainingTime -= Time.fixedDeltaTime;
         remainingWallTime -= Time.fixedDeltaTime;
 
+        if (remainingWallTime < 0)
+        {
+            SpawnWall();
+            remainingWallTime = wallInterval;
+            keySpawned = false;
+            lockSpawned = false;
+            remainingTime += 5.0f;
+        }
+
         // Spawn obstacles
         if (remainingTime < 0)
         {
-            if (remainingWallTime < 0)
-            {
-                SpawnWall();
-                remainingWallTime = wallInterval;
-                keySpawned = false;
-                lockSpawned = false;
-                remainingTime += 5.0f;
-            }
-
-
             SpawnObjects();
             remainingTime += spawnInterval;
         }
-
 
         foreach (LaneObject obstacle in laneObjects)
         {

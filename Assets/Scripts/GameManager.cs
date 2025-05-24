@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public int level;
     [HideInInspector] public bool inGame = false;
     private List<GameObject> toDestroy = new List<GameObject>();
-
+    private Buzzer firstBuzzer = null;
+    private Buzzer secondBuzzer = null;
     private void Awake()
     {
         Instance = this;
@@ -93,6 +94,17 @@ public class GameManager : MonoBehaviour
             if (rightItem != null)
             {
                 gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
+            }
+            if (firstBuzzer != null)
+            {
+                if (secondBuzzer == null)
+                {
+                    gameUI.GetComponent<GameUI>().SetBuzzerTimer(firstBuzzer.remainingTime);
+                }
+                else
+                {
+                    BothBuzzed();
+                }
             }
         }
     }
@@ -267,5 +279,33 @@ public class GameManager : MonoBehaviour
     {
         rightItem = null;
         gameUI.GetComponent<GameUI>().SetRightBarActive(false);
+    }
+
+    public void SetBuzzer(Buzzer buzzer)
+    {
+        if (firstBuzzer == null)
+        {
+            firstBuzzer = buzzer;
+            gameUI.GetComponent<GameUI>().SetBuzzerTimerActive(true);
+        }
+        else if (firstBuzzer != buzzer)
+        {
+            secondBuzzer = buzzer;
+        }
+    }
+
+    public void RemoveBuzzer()
+    {
+        firstBuzzer = null;
+    }
+
+    private void BothBuzzed()
+    {
+        gameUI.GetComponent<GameUI>().SetBuzzerTimerActive(false);
+        firstBuzzer.BothBuzzed();
+        firstBuzzer = null;
+        secondBuzzer.BothBuzzed();
+        secondBuzzer = null;
+        lanes.WallUnlocked();
     }
 }

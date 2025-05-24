@@ -46,8 +46,9 @@ GameObject:
   - component: {fileID: 7474411453744740595}
   - component: {fileID: 58040418070616249}
   - component: {fileID: 5887448311691036334}
+  - component: {fileID: 413425130135719627}
   m_Layer: 0
-  m_Name: RealBuzzer
+  m_Name: Buzzer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,19 +153,7 @@ MonoBehaviour:
         m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6701420695577663841}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_material
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: 2e0c2d5610380264ba945aabb364387f, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_FirstFocusEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -227,6 +216,20 @@ MonoBehaviour:
   m_ClampToMaxDistance: 1
   m_MaxDistance: 0.1
   m_PokeFilter: {fileID: 58040418070616249}
+--- !u!114 &413425130135719627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653639087784725558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c9e2637f5237649a5c2f7680c9f50f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inactiveMaterial: {fileID: 2100000, guid: 2e0c2d5610380264ba945aabb364387f, type: 2}
+  remainingTime: 0
 --- !u!1 &2127233721400302366
 GameObject:
   m_ObjectHideFlags: 0
