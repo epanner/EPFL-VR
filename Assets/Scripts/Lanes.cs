@@ -186,7 +186,7 @@ public class Lanes : MonoBehaviour
             remainingWallTime = wallInterval;
             keySpawned = false;
             lockSpawned = false;
-            remainingTime += 5.0f;
+            remainingTime += 2.0f;
         }
 
         // Spawn obstacles
