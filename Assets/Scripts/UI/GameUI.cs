@@ -41,4 +41,14 @@ public class GameUI : MonoBehaviour
     {
         transform.Find("Score").GetComponent<TextMeshProUGUI>().SetText("Score: " + score);
     }
+    
+    public void SetBuzzerTimerActive(bool active)
+    {
+        transform.Find("BuzzerTimer").gameObject.SetActive(active);
+    }
+
+    public void SetBuzzerTimer(float value)
+    {
+        transform.Find("BuzzerTimer").GetComponent<TextMeshProUGUI>().SetText("Buzzer: " + Mathf.Round(value * 10) / 10);
+    }
 }

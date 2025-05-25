@@ -38,17 +38,14 @@ public class LaserGun : TempLaneObject
         {
             case 1:
                 laserLength = 100f;
-                destructionDelay = 1.0f;
                 selfDestructionDelay = 30.0f;
                 break;
             case 2:
                 laserLength = 50f;
-                destructionDelay = 1.0f;
                 selfDestructionDelay = 15.0f;
                 break;
             case 3:
                 laserLength = 30f;
-                destructionDelay = 1.5f;
                 selfDestructionDelay = 10f;
                 break;
         }
@@ -71,15 +68,16 @@ public class LaserGun : TempLaneObject
                 Vector3 start = laserOrigin.transform.position;
                 Vector3 dir = laserOrigin.transform.forward;
                 Vector3 end = start + dir * laserLength;
-    
+
                 lineRenderer.SetPosition(0, start);
                 lineRenderer.SetPosition(1, end);
                 lineRenderer.enabled = true;
-    
+                AudioManager.Instance.PlayShootSound();
+
                 if (Physics.Raycast(start, dir, out RaycastHit hit, laserLength))
                 {
                     lineRenderer.SetPosition(1, hit.point);
-    
+
                     // If it hits something tagged "Obstacle", destroy it
                     if (hit.collider.CompareTag("Obstacle"))
                     {
@@ -100,11 +98,18 @@ public class LaserGun : TempLaneObject
                             lastHit = hit.collider.gameObject;
                             hittingTime = 0.0f;
                         }
-    
+
                     }
                     else
                     {
                         lastHit = null;
+                    }
+                    if (hit.collider.CompareTag("PuzzleTarget"))
+                    {
+                        SendHaptic(0.2f, 0.1f);
+                        AudioManager.Instance.PlayTargetPopSound();
+                        hit.collider.gameObject.GetComponent<PuzzleTarget>().SetTargetActive();
+                        hit.collider.enabled = false;
                     }
                 }
             }
@@ -150,7 +155,7 @@ public class LaserGun : TempLaneObject
         {
             GameManager.Instance.RemoveRightItem();
         }
-        
+
         if (currentInteractor == args.interactorObject)
             currentInteractor = null;
 

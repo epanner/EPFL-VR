@@ -11,7 +11,7 @@ public class ArmHoverController : MonoBehaviour
     public float handDistanceThreshold = 0.3f; // Horizontal distance needed (meters)
     public float minHandsHeight = -0.2f;      // How above the head the hands should be (meters) (negative means below)
 
-    private float baseYLevel = 1.1f;
+    private float baseYLevel = 0f;
     private float targetYOffset = 0f;
 
     // Hover energy bar
