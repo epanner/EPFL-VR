@@ -82,6 +82,8 @@ public class Stick : TempLaneObject
         head = Camera.main.transform;
         interactor = args.interactorObject as XRBaseInputInteractor;
 
+        GameManager.Instance.AddToDestroy(gameObject);
+
         inLane = false;
         rb.isKinematic = false;
     }
@@ -92,7 +94,7 @@ public class Stick : TempLaneObject
         lanes.SetSpeedModifier(1);
         interactor = null;
 
-        rb.isKinematic = true;
+        rb.isKinematic = false;
     }
 
 }
