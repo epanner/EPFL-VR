@@ -5,8 +5,8 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance;
 
     [Header("Music")]
-    public AudioClip spaceshipMusic;   // ← assign for XR Origin_Start
-    public AudioClip gameMusic;        // ← assign for XR Origin_Game
+    public AudioClip spaceshipMusic;
+    public AudioClip gameMusic;
     public AudioSource musicSource;
 
     [Header("SFX")]
@@ -31,7 +31,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        PlaySpaceshipMusic();  // Start in menu context
+        PlaySpaceshipMusic();
     }
 
     public void PlaySpaceshipMusic()

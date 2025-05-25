@@ -29,13 +29,11 @@ public class SettingsPanel : MonoBehaviour
     public AudioListener listener1;
     public AudioListener listener2;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         speedSlider.value = speedModifier;
     }
 
-    // Update is called once per frame
     void Update()
     {
 

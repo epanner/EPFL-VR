@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 public class ArrowMover : MonoBehaviour
 {
-    public RectTransform arrowTransform;  // drag your arrow image here
-    public float moveDistance = 100f;     // how far to move right
-    public float moveDuration = 0.5f;     // time for each move
+    public RectTransform arrowTransform;
+    public float moveDistance = 100f; 
+    public float moveDuration = 0.5f;
     public int repeatCount = 2;
 
     private Vector2 originalPos;
