@@ -6,12 +6,16 @@ public class Stick : TempLaneObject
 {
     private Transform head;
     private XRBaseInputInteractor interactor;
+    private Rigidbody rb;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Get the lanes component from the scene
         lanes = FindFirstObjectByType<Lanes>();
+
+        rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
 
         switch (GameManager.Instance.level)
         {
@@ -77,6 +81,9 @@ public class Stick : TempLaneObject
         isGrabbed = true;
         head = Camera.main.transform;
         interactor = args.interactorObject as XRBaseInputInteractor;
+
+        inLane = false;
+        rb.isKinematic = false;
     }
 
     public void SelectExited(SelectExitEventArgs args)
@@ -84,6 +91,8 @@ public class Stick : TempLaneObject
         isGrabbed = false;
         lanes.SetSpeedModifier(1);
         interactor = null;
+
+        rb.isKinematic = true;
     }
 
 }

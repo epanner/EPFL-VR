@@ -31,8 +31,10 @@ public class Lanes : MonoBehaviour
     public GameObject key;
     public GameObject lockObject;
     public GameObject gun;
+    public GameObject stick;
     public float bombChance = 0.1f;
     public float gunChance = 0.1f;
+    public float stickChance = 0.1f;
     private List<LaneObject> laneObjects = new List<LaneObject>();
 
     private float spawnInterval = 1.5f;
@@ -241,6 +243,10 @@ public class Lanes : MonoBehaviour
             else if (Random.Range(0.0f, 1.0f) < gunChance)
             {
                 spawnObject = gun;
+            }
+            else if (Random.Range(0.0f, 1.0f) < stickChance)
+            {
+                spawnObject = stick;
             }
             else
             {
