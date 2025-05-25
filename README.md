@@ -17,7 +17,7 @@ Any script of this project has been copy-pasted or used as-is from an external s
 
 - The **Hovering** custom feature mostly resides into the ArmHoverController script but it also checks the inGame property of the GameManager script and communicate its hoverCharge property to the GameUI script through its public method SetHoverBarValue.
 
-- The **Wall Puzzle** feature logic can be found in both the PuzzleTarget scrip and the Wall script. The PuzzleTarget script only handles the state of its game object by exposing a public method SetTargetActive (used in LaserGun when there is a collision with the laser) and the public property isActivated. And the Wall script checks this public state of all of its target children to trigger its destruction or not.
+- The **Wall Target Shooting** feature logic can be found in both the PuzzleTarget scrip and the Wall script. The PuzzleTarget script only handles the state of its game object by exposing a public method SetTargetActive (used in LaserGun when there is a collision with the laser) and the public property isActivated. And the Wall script checks this public state of all of its target children to trigger its destruction or not.
 
 - The **last custom feature** ...
 
