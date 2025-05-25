@@ -15,7 +15,7 @@ public class Lanes : MonoBehaviour
     private System.Func<float, float> GetSpeed { get; set; }
 
     // Teleport function
-    public GameObject padObject;
+    public GameObject padContainer;
     private List<GameObject> teleportPads = new List<GameObject>();
     public bool teleportEnabled = false;
 
@@ -54,24 +54,6 @@ public class Lanes : MonoBehaviour
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
-
-        // Create more teleport pads for every lane
-        GameObject pad = padObject.transform.GetChild(0).gameObject;
-        teleportPads.Add(pad);
-        for (int i = 1; i < lanes; i++)
-        {
-            GameObject newPad = Instantiate(pad, padObject.transform);
-            teleportPads.Add(newPad);
-        }
-
-        // Set the position of the teleport pads
-        for (int i = 0; i < teleportPads.Count; i++)
-        {
-            GameObject padObject = teleportPads[i];
-            Vector3 padPosition = playerSpawnPoint.position + new Vector3((i + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
-            padObject.transform.position = padPosition;
-        }
-        padObject.SetActive(true);
 
         // Instantiate the 2 buzzers
         leftBuzzer = Instantiate(buzzerPrefab, transform);
@@ -130,8 +112,6 @@ public class Lanes : MonoBehaviour
 
             lockSpawned = false;
             lockPrevTime = 6.0f;
-
-            teleportEnabled = false;
         }
         else if (level == 3)
         {
@@ -154,13 +134,11 @@ public class Lanes : MonoBehaviour
 
             lockSpawned = false;
             lockPrevTime = 6.0f;
-
-            teleportEnabled = false;
         }
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
-        
+
         leftBuzzer.GetComponent<Buzzer>().InitGame(level);
         rightBuzzer.GetComponent<Buzzer>().InitGame(level);
         active = true;
@@ -342,11 +320,7 @@ public class Lanes : MonoBehaviour
     {
         teleportEnabled = enabled;
 
-        // Hide/unhide all teleport pads
-        foreach (GameObject pad in teleportPads)
-        {
-            pad.SetActive(enabled);
-        }
+        padContainer.SetActive(enabled);
     }
 
     public List<GameObject> GetTeleportPads()

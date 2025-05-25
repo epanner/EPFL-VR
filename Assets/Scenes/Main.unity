@@ -2343,9 +2343,13 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
     - {fileID: 5033801203051696737, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+    - {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
     m_RemovedGameObjects:
     - {fileID: 3812430003910873999, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
     m_AddedGameObjects:
@@ -22316,6 +22320,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007441939}
   m_Mesh: {fileID: 4300000, guid: bb01b9278a1b047a796cd1810d13fa84, type: 3}
+--- !u!114 &2034348432 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1748222016861356527, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 183271870}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f69dc1cb084aa42b2f2f8cd87bc770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2047118664
 GameObject:
   m_ObjectHideFlags: 0
@@ -23358,10 +23373,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1891479474}
     m_Modifications:
+    - target: {fileID: 1074478845317967333, guid: 0db4651b88431174881202996d7679f8, type: 3}
+      propertyPath: m_TeleportationProvider
+      value: 
+      objectReference: {fileID: 2034348432}
     - target: {fileID: 4654659749261499664, guid: 0db4651b88431174881202996d7679f8, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5336833489141059210, guid: 0db4651b88431174881202996d7679f8, type: 3}
+      propertyPath: m_TeleportationProvider
+      value: 
+      objectReference: {fileID: 2034348432}
     - target: {fileID: 5438706080470343632, guid: 0db4651b88431174881202996d7679f8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -23402,6 +23425,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5875860215776791780, guid: 0db4651b88431174881202996d7679f8, type: 3}
+      propertyPath: m_TeleportationProvider
+      value: 
+      objectReference: {fileID: 2034348432}
     - target: {fileID: 5913541334179856005, guid: 0db4651b88431174881202996d7679f8, type: 3}
       propertyPath: buzzer
       value: 
@@ -23450,6 +23477,10 @@ PrefabInstance:
       propertyPath: 'asteroids.Array.data[8]'
       value: 
       objectReference: {fileID: 7642089964585371861, guid: ec4c29675987e87429aeec5e4e93fc5f, type: 3}
+    - target: {fileID: 5921447079295058172, guid: 0db4651b88431174881202996d7679f8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.485
+      objectReference: {fileID: 0}
     - target: {fileID: 7596518304817313632, guid: 0db4651b88431174881202996d7679f8, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.42
@@ -23466,6 +23497,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lanes
       objectReference: {fileID: 0}
+    - target: {fileID: 8706265378592458210, guid: 0db4651b88431174881202996d7679f8, type: 3}
+      propertyPath: m_TeleportationProvider
+      value: 
+      objectReference: {fileID: 2034348432}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
