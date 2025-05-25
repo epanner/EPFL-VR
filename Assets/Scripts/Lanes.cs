@@ -41,13 +41,15 @@ public class Lanes : MonoBehaviour
     private float lockPrevTime = 6.0f;
     private List<LaneObject> walls = new List<LaneObject>();
 
+    private float speedModifier = 1.0f;
+
     private bool active = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
-    
+
         // Create more teleport pads for every lane
         GameObject pad = padObject.transform.GetChild(0).gameObject;
         teleportPads.Add(pad);
@@ -186,7 +188,7 @@ public class Lanes : MonoBehaviour
             if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
             {
                 // Move the obstacle in the specified direction
-                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer);
+                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer) * speedModifier;
             }
         }
 
@@ -347,5 +349,10 @@ public class Lanes : MonoBehaviour
         {
             walls.Remove(laneObject);
         }
+    }
+
+    public void SetSpeedModifier(float speedModifier)
+    {
+        this.speedModifier = speedModifier;
     }
 }

@@ -52,7 +52,7 @@ public class ArmHoverController : MonoBehaviour
             default:
                 break;
         }
-        
+
         hoverBar.GetComponent<HoverBarUI>().SetHoverBarValue(hoverCharge);
     }
 
