@@ -48,7 +48,6 @@ public class Lanes : MonoBehaviour
 
     private bool active = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
@@ -172,7 +171,6 @@ public class Lanes : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (!active) return;

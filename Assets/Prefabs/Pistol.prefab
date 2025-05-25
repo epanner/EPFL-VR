@@ -394,21 +394,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dece5b8023a9fa846be06431d44510dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootAction:
-    m_UseReference: 1
+  leftShootAction:
+    m_UseReference: 0
     m_Action:
-      m_Name: Shoot
+      m_Name: Left Shoot
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: d290fce4-32f4-47f1-a25e-02f401ca8ec8
+      m_Id: 932f6a51-d56f-40d7-95f1-663f81d19f70
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 3104835805961918824, guid: 72e26b68329046344bc7a14f0f184a81, type: 3}
+    m_Reference: {fileID: 0}
+  rightShootAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Right Shoot
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 71e1c1db-3968-4040-98a3-7561ddbe04ef
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
   laserOrigin: {fileID: 3765855254755968670}
-  laserLength: 20
-  destructionDelay: 2
 --- !u!1 &3765855254755968670
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,6 @@ public class Bomb : TempLaneObject
 
     private bool armed = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         switch (GameManager.Instance.level)
@@ -32,7 +31,6 @@ public class Bomb : TempLaneObject
         rb.isKinematic = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!GameManager.Instance.inGame) return;
@@ -52,7 +50,7 @@ public class Bomb : TempLaneObject
         isGrabbed = true;
         currentInteractor = args.interactorObject;
 
-        // Determine which hand is grabbing the gun
+        // Determine which hand is grabbing the bomb
 
         if (currentInteractor.handedness == InteractorHandedness.Left)
         {
