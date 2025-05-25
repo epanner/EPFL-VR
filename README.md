@@ -19,7 +19,7 @@ Any script of this project has been copy-pasted or used as-is from an external s
 
 - The **Wall Target Shooting** feature logic can be found in both the PuzzleTarget scrip and the Wall script. The PuzzleTarget script only handles the state of its game object by exposing a public method SetTargetActive (used in LaserGun when there is a collision with the laser) and the public property isActivated. And the Wall script checks this public state of all of its target children to trigger its destruction or not.
 
-- The **last custom feature** ...
+- The **Time stick** item logic is found in the Stick script, which handles the state of the stick and its interaction with the player. The Lane script is also involved in the item's behaviour, as it manages the speed of the lanes when the stick is active, slowing down the game speed.
 
 ## 🎮 Platform & Technology
 

@@ -70,7 +70,7 @@ public class Stick : TempLaneObject
         // Send haptic feedback based on 1 - percentage
         if (interactor != null)
         {
-            float intensity = Mathf.Clamp01(1 - percentage);
+            float intensity = Mathf.Clamp01(percentage);
             float duration = 0.05f; // Short pulse
             interactor.SendHapticImpulse(intensity, duration);
         }
