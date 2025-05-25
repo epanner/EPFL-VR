@@ -2,23 +2,46 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-public class Stick : LaneObject
+public class Stick : TempLaneObject
 {
     private Transform head;
-    private bool held = false;
-    private XRBaseInputInteractor interactor; // Store the interactor for haptics
+    private XRBaseInputInteractor interactor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Get the lanes component from the scene
         lanes = FindFirstObjectByType<Lanes>();
+
+        switch (GameManager.Instance.level)
+        {
+            case 1:
+                selfDestructionDelay = 15f;
+                break;
+            case 2:
+                selfDestructionDelay = 10f;
+                break;
+            case 3:
+                selfDestructionDelay = 5f;
+                break;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!held) return;
+        if (!GameManager.Instance.inGame) return;
+
+        if (isGrabbed)
+        {
+            grabbingTime += Time.deltaTime;
+        }
+        if (grabbingTime > selfDestructionDelay)
+        {
+            Destroy(gameObject);
+        }
+
+        if (!isGrabbed) return;
 
         // Calculate the angle of the object relative to the camera
         Vector3 direction = head.position - transform.position;
@@ -51,14 +74,14 @@ public class Stick : LaneObject
 
     public void SelectEntered(SelectEnterEventArgs args)
     {
-        held = true;
+        isGrabbed = true;
         head = Camera.main.transform;
         interactor = args.interactorObject as XRBaseInputInteractor;
     }
 
     public void SelectExited(SelectExitEventArgs args)
     {
-        held = false;
+        isGrabbed = false;
         lanes.SetSpeedModifier(1);
         interactor = null;
     }
