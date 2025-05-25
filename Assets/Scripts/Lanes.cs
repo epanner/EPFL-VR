@@ -330,6 +330,8 @@ public class Lanes : MonoBehaviour
             LaneObject wall = walls[0];
             walls.RemoveAt(0);
             laneObjects.Remove(wall);
+            GameManager.Instance.BothControllerHaptics(0.8f, 0.2f);
+            AudioManager.Instance.PlayBreakSound();
             Destroy(wall.gameObject);
         }
     }

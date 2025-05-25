@@ -12321,7 +12321,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1628951278}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -16445,15 +16445,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "5. When a gigantic wall is coming at you, you have 2 alternatives to get
+  m_text: "5. When a gigantic wall is coming at you, you have 3 alternatives to get
     rid of it: \n\t- you can grab the little cyan cube and put it into the cyan cylinder
     (socket) \n\t- you can push the 2 buzzer buttons on each side of the lanes in
     less than a certain amount of time (indicated on top center of the general UI
-    when you push one of them).\n\n6. At any time of the game, if your hovering energy
-    bar (center of general UI) allows it, you can form a T with your arms to hover
-    over the obstacles (but not over the wall!).\n\n7. When you are hit by an asteroid
-    or a wall, you loose lives. Your current number of life is indicated in the top-left
-    corner of the general UI."
+    when you push one of them).\n\t- take a gun and shoot all the little red target!\n\n6.
+    At any time of the game, if your hovering energy bar (center of general UI) allows
+    it, you can form a T with your arms to hover over the obstacles (but not over
+    the wall!).\n\n7. When you are hit by an asteroid or a wall, you loose lives.
+    Your current number of life is indicated in the top-left corner of the general
+    UI."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -16480,8 +16481,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42
-  m_fontSizeBase: 42
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -18236,6 +18237,7 @@ MonoBehaviour:
   gameOverClip: {fileID: 8300000, guid: 5e0e5f5b2e1d5874aad33b1fc93772b5, type: 3}
   uiClickClip: {fileID: 8300000, guid: efb5f1b0875bbc7408e2352c2367f89a, type: 3}
   playerHitClip: {fileID: 8300000, guid: 9760bc2e8f513234e95fd62a98c956e5, type: 3}
+  targetPopClip: {fileID: 8300000, guid: db74ed4565552bd44b582e66c5890dd5, type: 3}
   sfxSource: {fileID: 1765761714}
 --- !u!82 &1765761714
 AudioSource:
@@ -21305,7 +21307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1963593973
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22905,7 +22907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2147362129
 RectTransform:
   m_ObjectHideFlags: 0

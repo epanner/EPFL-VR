@@ -104,6 +104,13 @@ public class LaserGun : TempLaneObject
                     {
                         lastHit = null;
                     }
+                    if (hit.collider.CompareTag("PuzzleTarget"))
+                    {
+                        SendHaptic(0.2f, 0.1f);
+                        AudioManager.Instance.PlayTargetPopSound();
+                        hit.collider.gameObject.GetComponent<PuzzleTarget>().SetTargetActive();
+                        hit.collider.enabled = false;
+                    }
                 }
             }
             else

@@ -16,6 +16,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip gameOverClip;
     public AudioClip uiClickClip;
     public AudioClip playerHitClip;
+    public AudioClip targetPopClip;
     public AudioSource sfxSource;
 
     void Awake()
@@ -74,4 +75,5 @@ public class AudioManager : MonoBehaviour
     public void PlayGameOverSound() => PlaySFX(gameOverClip);
     public void PlayUIClickSound() => PlaySFX(uiClickClip);
     public void PlayPlayerHitSound() => PlaySFX(playerHitClip);
+    public void PlayTargetPopSound() => PlaySFX(targetPopClip);
 }

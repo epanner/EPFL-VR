@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    BothBuzzed();
+                    UnlockWall();
                 }
             }
         }
@@ -299,12 +299,12 @@ public class GameManager : MonoBehaviour
         firstBuzzer = null;
     }
 
-    private void BothBuzzed()
+    public void UnlockWall()
     {
         gameUI.GetComponent<GameUI>().SetBuzzerTimerActive(false);
-        firstBuzzer.BothBuzzed();
+        if (firstBuzzer != null) firstBuzzer.BothBuzzed();
         firstBuzzer = null;
-        secondBuzzer.BothBuzzed();
+        if (secondBuzzer != null) secondBuzzer.BothBuzzed();
         secondBuzzer = null;
         lanes.WallUnlocked();
     }
