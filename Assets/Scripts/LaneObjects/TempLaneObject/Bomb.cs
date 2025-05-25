@@ -98,6 +98,7 @@ public class Bomb : TempLaneObject
         {
             if (hit.collider.CompareTag("Obstacle"))
             {
+                hit.collider.gameObject.GetComponent<Asteroid>().FractureObject();
                 Destroy(hit.collider.gameObject);
             }
         }

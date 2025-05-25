@@ -39,10 +39,12 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public int level;
     [HideInInspector] public bool inGame = false;
     private List<GameObject> toDestroy = new List<GameObject>();
-
+    private Buzzer firstBuzzer = null;
+    private Buzzer secondBuzzer = null;
     private void Awake()
     {
         Instance = this;
+        AudioManager.Instance.PlaySpaceshipMusic();
     }
 
     private void Start()
@@ -73,6 +75,7 @@ public class GameManager : MonoBehaviour
         SwitchToGameWithFade();
         gameOrigin.GetComponent<ArmHoverController>().Init(level);
         lanes.InitGame(level);
+        AudioManager.Instance.PlayGameMusic();
         gameUI.GetComponent<GameUI>().InitUI(health, currentScore);
         gameUI.SetActive(true);
         inGame = true;
@@ -92,6 +95,17 @@ public class GameManager : MonoBehaviour
             {
                 gameUI.GetComponent<GameUI>().SetRightBarValue(rightItem.GetPercentage());
             }
+            if (firstBuzzer != null)
+            {
+                if (secondBuzzer == null)
+                {
+                    gameUI.GetComponent<GameUI>().SetBuzzerTimer(firstBuzzer.remainingTime);
+                }
+                else
+                {
+                    UnlockWall();
+                }
+            }
         }
     }
 
@@ -102,6 +116,7 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         gameOverUI.SetActive(true); // Show Game Over UI
         Time.timeScale = 0.0f;
+        AudioManager.Instance.PauseGameMusic();
     }
 
     public void GamePaused()
@@ -110,6 +125,7 @@ public class GameManager : MonoBehaviour
         lanes.StartLanes(false);
         gamePausedUI.SetActive(true);
         Time.timeScale = 0f;
+        AudioManager.Instance.PauseGameMusic();
     }
 
     public void GameResumed()
@@ -117,6 +133,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         lanes.StartLanes(true);
         inGame = true;
+        AudioManager.Instance.ResumeGameMusic();
     }
 
     public void BackToStart()
@@ -125,6 +142,7 @@ public class GameManager : MonoBehaviour
         Clean();
         SaveAndReInitCurrentScore();
         SwitchToStartWithFade();
+        AudioManager.Instance.PlaySpaceshipMusic();
     }
 
     private void UpdateScoreUI()
@@ -135,6 +153,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerHit(int damage = 1)
     {
+        AudioManager.Instance.PlayPlayerHitSound();
         BothControllerHaptics(0.2f, 0.1f);
         health -= damage;
         if (health <= 0)
@@ -142,12 +161,6 @@ public class GameManager : MonoBehaviour
             GameOver();
         }
         gameUI.GetComponent<GameUI>().SetHealth(health);
-    }
-
-    public void GrenadeExploded()
-    {
-        Debug.Log("Grenade");
-        BothControllerHaptics(0.8f, 0.2f);
     }
 
     public void BothControllerHaptics(float intensity, float duration)
@@ -167,30 +180,6 @@ public class GameManager : MonoBehaviour
         welcomeUI.GetComponent<WelcomeUI>().SetRecord(scoreRecord);
         currentScore = 0;
         gameTimer = 0.0f;
-    }
-
-    public void SetLeftItem(TempLaneObject item)
-    {
-        leftItem = item;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
-    }
-
-    public void SetRightItem(TempLaneObject item)
-    {
-        rightItem = item;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
-    }
-
-    public void RemoveLeftItem()
-    {
-        leftItem = null;
-        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
-    }
-
-    public void RemoveRightItem()
-    {
-        rightItem = null;
-        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
     }
 
     public void SwitchToGameWithFade()
@@ -241,6 +230,12 @@ public class GameManager : MonoBehaviour
         fadeCanvas.alpha = to;
     }
 
+    public void GrenadeExploded()
+    {
+        Debug.Log("Grenade");
+        BothControllerHaptics(0.8f, 0.2f);
+    }
+
     public void AddToDestroy(GameObject item)
     {
         toDestroy.Add(item);
@@ -253,5 +248,64 @@ public class GameManager : MonoBehaviour
         {
             Destroy(item);
         }
+        SwitchToStartWithFade();
+        lanes.CleanGame();
+
+        if (gameOverUI != null)
+            gameOverUI.SetActive(false); // Hide Game Over UI
+    }
+
+    public void SetLeftItem(TempLaneObject item)
+    {
+        leftItem = item;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(true);
+        AudioManager.Instance.PlayGrabSound();
+    }
+
+    public void SetRightItem(TempLaneObject item)
+    {
+        rightItem = item;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(true);
+        AudioManager.Instance.PlayGrabSound();
+    }
+
+    public void RemoveLeftItem()
+    {
+        leftItem = null;
+        gameUI.GetComponent<GameUI>().SetLeftBarActive(false);
+    }
+
+    public void RemoveRightItem()
+    {
+        rightItem = null;
+        gameUI.GetComponent<GameUI>().SetRightBarActive(false);
+    }
+
+    public void SetBuzzer(Buzzer buzzer)
+    {
+        if (firstBuzzer == null)
+        {
+            firstBuzzer = buzzer;
+            gameUI.GetComponent<GameUI>().SetBuzzerTimerActive(true);
+        }
+        else if (firstBuzzer != buzzer)
+        {
+            secondBuzzer = buzzer;
+        }
+    }
+
+    public void RemoveBuzzer()
+    {
+        firstBuzzer = null;
+    }
+
+    public void UnlockWall()
+    {
+        gameUI.GetComponent<GameUI>().SetBuzzerTimerActive(false);
+        if (firstBuzzer != null) firstBuzzer.BothBuzzed();
+        firstBuzzer = null;
+        if (secondBuzzer != null) secondBuzzer.BothBuzzed();
+        secondBuzzer = null;
+        lanes.WallUnlocked();
     }
 }

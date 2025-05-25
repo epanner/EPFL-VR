@@ -20,6 +20,7 @@ public class Key : LaneObject
 
     public void SelectEntered(SelectEnterEventArgs args)
     {
+        AudioManager.Instance.PlayGrabSound();
         inLane = false;
         GameManager.Instance.AddToDestroy(gameObject);
         rb.isKinematic = false;

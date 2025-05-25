@@ -15,7 +15,7 @@ public class Lanes : MonoBehaviour
     private System.Func<float, float> GetSpeed { get; set; }
 
     // Teleport function
-    public GameObject padObject;
+    public GameObject padContainer;
     private List<GameObject> teleportPads = new List<GameObject>();
     public bool teleportEnabled = false;
 
@@ -31,8 +31,10 @@ public class Lanes : MonoBehaviour
     public GameObject key;
     public GameObject lockObject;
     public GameObject gun;
+    public GameObject stick;
     public float bombChance = 0.1f;
     public float gunChance = 0.1f;
+    public float stickChance = 0.1f;
     private List<LaneObject> laneObjects = new List<LaneObject>();
 
     private float spawnInterval = 1.5f;
@@ -46,35 +48,19 @@ public class Lanes : MonoBehaviour
     private float lockPrevTime = 6.0f;
     private List<LaneObject> walls = new List<LaneObject>();
 
+    private float speedModifier = 1.0f;
+
     private bool active = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         despawnPoint = obstacleSpawnPoint.position + direction * 80.0f;
-    
-        // Create more teleport pads for every lane
-        GameObject pad = padObject.transform.GetChild(0).gameObject;
-        teleportPads.Add(pad);
-        for (int i = 1; i < lanes; i++)
-        {
-            GameObject newPad = Instantiate(pad, padObject.transform);
-            teleportPads.Add(newPad);
-        }
-
-        // Set the position of the teleport pads
-        for (int i = 0; i < teleportPads.Count; i++)
-        {
-            GameObject padObject = teleportPads[i];
-            Vector3 padPosition = playerSpawnPoint.position + new Vector3((i + 1) * laneWidth, 0, 0) - new Vector3((lanes + 1) * laneWidth / 2, 0, 0);
-            padObject.transform.position = padPosition;
-        }
-        padObject.SetActive(true);
 
         // Instantiate the 2 buzzers
         leftBuzzer = Instantiate(buzzerPrefab, transform);
         leftBuzzer.transform.position = playerSpawnPoint.position + new Vector3((lanes + 1) * laneWidth / 2, 1, 0);
-        
+
         rightBuzzer = Instantiate(buzzerPrefab, transform);
         rightBuzzer.transform.position = playerSpawnPoint.position - new Vector3((lanes + 1) * laneWidth / 2, -1, 0);
 
@@ -128,8 +114,6 @@ public class Lanes : MonoBehaviour
 
             lockSpawned = false;
             lockPrevTime = 6.0f;
-
-            teleportEnabled = false;
         }
         else if (level == 3)
         {
@@ -152,12 +136,13 @@ public class Lanes : MonoBehaviour
 
             lockSpawned = false;
             lockPrevTime = 6.0f;
-
-            teleportEnabled = false;
         }
 
         // Set the teleport pads depending on active state
         EnableTeleportPads(teleportEnabled);
+
+        leftBuzzer.GetComponent<Buzzer>().InitGame(level);
+        rightBuzzer.GetComponent<Buzzer>().InitGame(level);
         active = true;
     }
 
@@ -177,30 +162,28 @@ public class Lanes : MonoBehaviour
         remainingTime -= Time.fixedDeltaTime;
         remainingWallTime -= Time.fixedDeltaTime;
 
+        if (remainingWallTime < 0)
+        {
+            SpawnWall();
+            remainingWallTime = wallInterval;
+            keySpawned = false;
+            lockSpawned = false;
+            remainingTime += 2.0f;
+        }
+
         // Spawn obstacles
         if (remainingTime < 0)
         {
-            if (remainingWallTime < 0)
-            {
-                SpawnWall();
-                remainingWallTime = wallInterval;
-                keySpawned = false;
-                lockSpawned = false;
-                remainingTime += 5.0f;
-            }
-
-
             SpawnObjects();
             remainingTime += spawnInterval;
         }
-
 
         foreach (LaneObject obstacle in laneObjects)
         {
             if (obstacle != null)  // don't know why the destroy doesn't work as expected, obstacle still in the list after destroy
             {
                 // Move the obstacle in the specified direction
-                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer);
+                obstacle.transform.position += direction * Time.deltaTime * GetSpeed(GameManager.Instance.gameTimer) * speedModifier;
             }
         }
 
@@ -260,6 +243,10 @@ public class Lanes : MonoBehaviour
             else if (Random.Range(0.0f, 1.0f) < gunChance)
             {
                 spawnObject = gun;
+            }
+            else if (Random.Range(0.0f, 1.0f) < stickChance)
+            {
+                spawnObject = stick;
             }
             else
             {
@@ -329,6 +316,8 @@ public class Lanes : MonoBehaviour
             LaneObject wall = walls[0];
             walls.RemoveAt(0);
             laneObjects.Remove(wall);
+            GameManager.Instance.BothControllerHaptics(0.8f, 0.2f);
+            AudioManager.Instance.PlayBreakSound();
             Destroy(wall.gameObject);
         }
     }
@@ -337,11 +326,7 @@ public class Lanes : MonoBehaviour
     {
         teleportEnabled = enabled;
 
-        // Hide/unhide all teleport pads
-        foreach (GameObject pad in teleportPads)
-        {
-            pad.SetActive(enabled);
-        }
+        padContainer.SetActive(enabled);
     }
 
     public List<GameObject> GetTeleportPads()
@@ -361,5 +346,10 @@ public class Lanes : MonoBehaviour
         {
             walls.Remove(laneObject);
         }
+    }
+
+    public void SetSpeedModifier(float speedModifier)
+    {
+        this.speedModifier = speedModifier;
     }
 }
