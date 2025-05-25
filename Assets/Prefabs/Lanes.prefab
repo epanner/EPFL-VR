@@ -266,8 +266,10 @@ MonoBehaviour:
   key: {fileID: 8940684873855578345, guid: 520740ba915699a4b9f9246a873d9a3c, type: 3}
   lockObject: {fileID: 1616791869829328062, guid: b2bc5ac94c0ce304fa4a47636b9afc62, type: 3}
   gun: {fileID: 205263626528272733, guid: 52148a37ad7da764c9121c9c610514af, type: 3}
+  stick: {fileID: 7627579428132442927, guid: 9656da61c7d99174b92b1bcbb2167f98, type: 3}
   bombChance: 0.1
   gunChance: 0.1
+  stickChance: 0.1
 --- !u!1001 &409363012469109450
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -76,5 +76,6 @@ public class SettingsPanel : MonoBehaviour
     {
         laneTeleport = !laneTeleport;
         lanes.EnableTeleportPads(laneTeleport);
+        teleportButtonText.text = laneTeleport ? "Enabled" : "Disabled";
     }
 }
